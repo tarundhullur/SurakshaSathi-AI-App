@@ -53,7 +53,6 @@ Build SurakshaSathi AI App/
 ├── vite.config.ts                   # Vite configuration with React, Tailwind v4 & Figma plugins
 ├── tsconfig.json                    # TypeScript compiler options
 ├── MANUAL_TESTS.md                  # Step-by-step test scenarios
-├── PRESENTATION_SCRIPT.md           # Demonstration and presentation talking points
 
 ```
 
