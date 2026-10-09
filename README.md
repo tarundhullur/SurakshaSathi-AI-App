@@ -54,8 +54,7 @@ Build SurakshaSathi AI App/
 ├── tsconfig.json                    # TypeScript compiler options
 ├── MANUAL_TESTS.md                  # Step-by-step test scenarios
 ├── PRESENTATION_SCRIPT.md           # Demonstration and presentation talking points
-├── VIVA_GUIDE.md                    # Viva questions & architectural answers
-└── README.md                        # Master project documentation
+
 ```
 
 ---
