@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "format": "oxfmt",
     "server": "node backend/server.js",
+    "setup:admin": "node backend/scripts/setupSuperAdmin.js",
     "test": "node --test backend/tests/*.test.js"
   },
   "dependencies": {
