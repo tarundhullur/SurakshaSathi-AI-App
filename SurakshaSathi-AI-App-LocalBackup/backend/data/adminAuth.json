@@ -1,0 +1,21 @@
+{
+  "adminUsers": [
+    {
+      "id": "usr-super-1792175220323",
+      "name": "Tarun Dhullur",
+      "email": "tarundhullur06@gmail.com",
+      "passwordHash": "543c111f41b74f8a86ca073095caecd7:9280c55e48379afc027660e9c03c4283ef14c9c957a09c692e9f77cf008061ef55036130c8b60e2d36f344ad0e1ea27ddc4e024555b2bc4b8237706a2be567fc",
+      "role": "Super Admin",
+      "status": "Active",
+      "avatar": "TD",
+      "phone": "+91 98000 11223",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": "",
+      "createdAt": "2026-10-16T18:27:00.323Z",
+      "lastLogin": "2026-10-16T18:27:00.323Z",
+      "totalComparisons": 0
+    }
+  ],
+  "invitations": [],
+  "initialized": true
+}

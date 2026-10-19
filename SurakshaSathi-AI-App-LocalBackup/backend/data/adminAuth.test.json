@@ -1,0 +1,63 @@
+{
+  "adminUsers": [
+    {
+      "id": "usr-super-1792175220323",
+      "name": "Tarun Dhullur",
+      "email": "tarundhullur06@gmail.com",
+      "passwordHash": "543c111f41b74f8a86ca073095caecd7:9280c55e48379afc027660e9c03c4283ef14c9c957a09c692e9f77cf008061ef55036130c8b60e2d36f344ad0e1ea27ddc4e024555b2bc4b8237706a2be567fc",
+      "role": "Super Admin",
+      "status": "Active",
+      "avatar": "TD",
+      "phone": "+91 98000 11223",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": "",
+      "createdAt": "2026-10-16T18:27:00.323Z",
+      "lastLogin": "2026-10-16T18:27:00.323Z",
+      "totalComparisons": 0
+    },
+    {
+      "id": "usr-adm-1792240922911",
+      "name": "Invited Colleague",
+      "email": "invited-1792240922878@team.example.com",
+      "passwordHash": "446b141ee228017b39e2853f1cdfe9c3:caa2ba60e7e3e939dec159e2b570ad55ffd5c53d19dab090839f0139868c66a6cc6d6a8eb3f9da43389e36b2fe629c49019451658845eab14f104aefaa9e50cb",
+      "role": "Admin",
+      "status": "Active",
+      "avatar": "IC",
+      "phone": "",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": "",
+      "createdAt": "2026-10-17T12:42:02.911Z",
+      "lastLogin": "2026-10-17T12:42:02.911Z",
+      "totalComparisons": 0
+    }
+  ],
+  "invitations": [
+    {
+      "id": "inv-1792240922912",
+      "email": "revoked-1792240922912@team.example.com",
+      "role": "Admin",
+      "token": "05278e94e484276a4ee063601afc0d50aab39f376a496c3147136d1cf02c4725",
+      "invitedBy": "admin@ridecompare.com",
+      "expiresAt": "2026-10-19T12:42:02.912Z",
+      "isUsed": false,
+      "usedAt": null,
+      "isRevoked": true,
+      "revokedAt": "2026-10-17T12:42:02.913Z",
+      "createdAt": "2026-10-17T12:42:02.912Z"
+    },
+    {
+      "id": "inv-1792240922878",
+      "email": "invited-1792240922878@team.example.com",
+      "role": "Admin",
+      "token": "0a2bd89ba388f655048b2e72d42352d4651c80e27a28810a233ab76a441f45bd",
+      "invitedBy": "admin@ridecompare.com",
+      "expiresAt": "2026-10-19T12:42:02.878Z",
+      "isUsed": true,
+      "usedAt": "2026-10-17T12:42:02.911Z",
+      "isRevoked": false,
+      "revokedAt": null,
+      "createdAt": "2026-10-17T12:42:02.878Z"
+    }
+  ],
+  "initialized": true
+}
