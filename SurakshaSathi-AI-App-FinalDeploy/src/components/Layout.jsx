@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { NavLink, Outlet, useNavigate, Link } from "react-router-dom"
+import { NavLink, Outlet, useNavigate } from "react-router-dom"
 import {
   AlertTriangle,
   BookOpen,
@@ -87,10 +87,18 @@ export default function Layout() {
       >
         <div className="flex h-full flex-col p-5">
           <div className="mb-8 flex items-center justify-between">
-            <NavLink
-              to="/"
-              className="flex items-center gap-3"
-              onClick={() => setOpen(false)}
+            <a
+              href="/"
+              className="flex items-center gap-3 cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault()
+                setOpen(false)
+                if (window.location.pathname === "/") {
+                  window.location.reload()
+                } else {
+                  window.location.assign("/")
+                }
+              }}
             >
               <span className="grid h-11 w-11 place-items-center rounded-2xl bg-teal-400 text-[#082f49]">
                 <ShieldCheck size={25} />
@@ -103,7 +111,7 @@ export default function Layout() {
                   AI Safety Companion
                 </span>
               </div>
-            </NavLink>
+            </a>
             <button
               className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10 lg:hidden"
               onClick={() => setOpen(false)}
@@ -143,29 +151,6 @@ export default function Layout() {
               )
             })}
 
-            {/* Administration Link: STRICTLY VISIBLE ONLY TO ADMINS */}
-            {isAdmin && (
-              <>
-                <div className="pt-3 pb-1">
-                  <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-teal-300/70">
-                    Administration
-                  </div>
-                </div>
-                <NavLink
-                  to="/admin"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm font-medium text-teal-100 hover:bg-white/10 hover:text-white transition"
-                >
-                  <span className="flex items-center gap-3">
-                    <ShieldCheck size={19} className="text-cyan-300" />
-                    SurakshaSathi Admin
-                  </span>
-                  <span className="text-[10px] bg-cyan-400/20 text-cyan-200 px-1.5 py-0.5 rounded font-bold border border-cyan-400/30">
-                    Portal
-                  </span>
-                </NavLink>
-              </>
-            )}
           </nav>
 
           {/* Indian Emergency 112 Help Banner */}
@@ -212,17 +197,6 @@ export default function Layout() {
           </p>
 
           <div className="ml-auto flex items-center gap-3">
-            {/* Admin Portal Pill: VISIBLE ONLY TO AUTHENTICATED ADMINS */}
-            {isAdmin && (
-              <NavLink
-                to="/admin"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-white hover:bg-blue-600 text-xs font-semibold shadow-sm transition"
-              >
-                <ShieldCheck size={14} className="text-cyan-400" />
-                <span>SurakshaSathi Admin</span>
-              </NavLink>
-            )}
-
             {/* User Auth Section */}
             {!isAuthenticated ? (
               <button
@@ -278,17 +252,6 @@ export default function Layout() {
                         )}
                       </div>
                     </div>
-
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-blue-600 hover:bg-blue-50 transition"
-                      >
-                        <ShieldCheck size={15} />
-                        <span>SurakshaSathi Admin Portal</span>
-                      </Link>
-                    )}
 
                     <button
                       onClick={() => {
