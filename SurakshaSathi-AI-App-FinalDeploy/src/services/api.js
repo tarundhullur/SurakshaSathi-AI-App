@@ -70,13 +70,107 @@ export async function analyzeMessage(message) {
   return localResult
 }
 
+function shouldCheckDns(hostname) {
+  if (typeof hostname !== "string" || !hostname || !hostname.includes(".")) {
+    return false
+  }
+  const host = hostname.toLowerCase().replace(/\.$/, "")
+  if (
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    host.endsWith(".local") ||
+    host.endsWith(".test") ||
+    host.endsWith(".invalid") ||
+    host === "example" ||
+    host.endsWith(".example") ||
+    ["example.com", "example.org", "example.net"].some(
+      (reserved) => host === reserved || host.endsWith(`.${reserved}`),
+    )
+  ) {
+    return false
+  }
+  if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(host) || host.includes(":") || host.startsWith("[")) {
+    return false
+  }
+  return true
+}
+
+async function checkDomainExistsDns(hostname) {
+  if (typeof fetch !== "function" || !shouldCheckDns(hostname)) {
+    return null
+  }
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 1800)
+  try {
+    const response = await fetch(
+      `https://dns.google/resolve?name=${encodeURIComponent(hostname)}&type=A`,
+      { signal: controller.signal },
+    )
+    if (!response.ok) return null
+    const data = await response.json()
+    if (data && data.Status === 3) {
+      return { exists: false, status: "NXDOMAIN" }
+    }
+    if (data && typeof data.Status === "number") {
+      return { exists: true, status: "OK" }
+    }
+    return null
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
+async function enrichWithDnsCheck(baseResult) {
+  if (!baseResult || baseResult.valid === false || !shouldCheckDns(baseResult.hostname)) {
+    return baseResult
+  }
+  const dns = await checkDomainExistsDns(baseResult.hostname)
+  if (!dns || dns.exists !== false) {
+    return baseResult
+  }
+
+  const indicators = [
+    ...(baseResult.indicators || []).filter((item) => item.id !== "unregistered-domain"),
+    {
+      id: "unregistered-domain",
+      indicator: "Unregistered / non-existent domain",
+      explanation: `Live DNS lookup confirmed "${baseResult.hostname}" does not resolve to an active domain on the public internet, which is common for fake, spoofed, or defunct links.`,
+      weight: 65,
+    },
+  ]
+
+  const score = Math.min(
+    100,
+    indicators.reduce((total, item) => total + (item.weight || 0), 0),
+  )
+  const category = score >= 60 ? "High Risk" : score >= 30 ? "Medium Risk" : "Low Risk"
+  const actions =
+    category === "High Risk"
+      ? [
+          "Do not sign in or enter credentials on this page.",
+          "Do not download files or complete payments through this link.",
+          "Type the official organization address manually in your browser.",
+        ]
+      : baseResult.actions
+
+  return {
+    ...baseResult,
+    score,
+    category,
+    indicators,
+    actions,
+  }
+}
+
 export async function analyzeUrl(url) {
   if (typeof url !== "string" || !url.trim()) {
     throw new Error("Please enter a website URL to analyze.")
   }
 
   // Always calculate reliable client-side result
-  const localResult = analyzeUrlLocal(url)
+  let baseResult = analyzeUrlLocal(url)
 
   // Attempt to submit to backend if running (e.g. for MongoDB logging)
   try {
@@ -94,16 +188,16 @@ export async function analyzeUrl(url) {
     if (response.ok && contentType.includes("application/json")) {
       const data = await response.json()
       if (data && typeof data.score === "number" && Array.isArray(data.indicators)) {
-        saveLocalScan("url", data)
-        return data
+        baseResult = data
       }
     }
   } catch {
-    // Backend is unavailable or running on static hosting (Figma Make). Fall through to local result.
+    // Backend is unavailable or running on static hosting. Fall through to local result.
   }
 
-  saveLocalScan("url", localResult)
-  return localResult
+  const finalResult = await enrichWithDnsCheck(baseResult)
+  saveLocalScan("url", finalResult)
+  return finalResult
 }
 
 export async function getHistory() {

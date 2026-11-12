@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Eraser,
   LoaderCircle,
@@ -13,6 +13,9 @@ import RiskResult from "./RiskResult.jsx"
 import { URL_EXAMPLES, MESSAGE_EXAMPLES } from "../utils/analyzers.js"
 import { useAuth } from "../contexts/AuthContext.jsx"
 
+const URL_LOCK_MESSAGE =
+  "You could not change anything after pasting the URL. Click Clear to test a different URL."
+
 export default function AnalyzerPage({
   type,
   title,
@@ -23,11 +26,28 @@ export default function AnalyzerPage({
   const [value, setValue] = useState("")
   const [result, setResult] = useState(null)
   const [error, setError] = useState("")
+  const [lockNotice, setLockNotice] = useState("")
+  const [isUrlLocked, setIsUrlLocked] = useState(false)
   const [loading, setLoading] = useState(false)
   const { isAuthenticated, requireAuth, openAuthModal } = useAuth()
 
   const isMessage = type === "message"
   const presets = isMessage ? MESSAGE_EXAMPLES : URL_EXAMPLES
+
+  useEffect(() => {
+    setValue("")
+    setResult(null)
+    setError("")
+    setLockNotice("")
+    setIsUrlLocked(false)
+  }, [type])
+
+  function blockUrlChange(event) {
+    if (event && typeof event.preventDefault === "function") {
+      event.preventDefault()
+    }
+    setLockNotice(URL_LOCK_MESSAGE)
+  }
 
   async function performAnalysis(textToAnalyze) {
     const target = (textToAnalyze !== undefined ? textToAnalyze : value).trim()
@@ -39,6 +59,7 @@ export default function AnalyzerPage({
     }
 
     setError("")
+    setLockNotice("")
     setLoading(true)
     try {
       const data = await analyze(target)
@@ -65,6 +86,8 @@ export default function AnalyzerPage({
   function loadExample(sampleText, autoAnalyze = false) {
     setValue(sampleText)
     setError("")
+    setLockNotice("")
+    setIsUrlLocked(false)
     if (autoAnalyze) {
       if (!isAuthenticated) {
         requireAuth(
@@ -118,7 +141,7 @@ export default function AnalyzerPage({
             onSubmit={handleSubmit}
             className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
           >
-            <div className="mb-2 flex items-center justify-between">
+            <div className="mb-2 flex items-center justify-between gap-2">
               <label
                 htmlFor="scan-input"
                 className="block text-sm font-bold text-slate-800"
@@ -127,9 +150,16 @@ export default function AnalyzerPage({
                   ? "Paste the suspicious message"
                   : "Enter the complete website URL"}
               </label>
-              <span className="text-xs font-semibold text-slate-400">
-                {isMessage ? "SMS · WhatsApp · Email" : "Web link analysis"}
-              </span>
+              {!isMessage && isUrlLocked ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800">
+                  <Lock size={11} />
+                  Pasted URL locked
+                </span>
+              ) : (
+                <span className="text-xs font-semibold text-slate-400">
+                  {isMessage ? "SMS · WhatsApp · Email" : "Web link analysis"}
+                </span>
+              )}
             </div>
 
             {isMessage ? (
@@ -149,18 +179,104 @@ export default function AnalyzerPage({
                 id="scan-input"
                 type="text"
                 value={value}
+                onPaste={(event) => {
+                  if (isUrlLocked) {
+                    blockUrlChange(event)
+                    return
+                  }
+                  const pasted = event.clipboardData?.getData("text") || ""
+                  if (!pasted.trim()) return
+                  event.preventDefault()
+                  const start = event.currentTarget.selectionStart ?? value.length
+                  const end = event.currentTarget.selectionEnd ?? value.length
+                  const nextValue = (
+                    value.slice(0, start) +
+                    pasted +
+                    value.slice(end)
+                  ).trim()
+                  setValue(nextValue)
+                  setError("")
+                  setLockNotice("")
+                  setIsUrlLocked(true)
+                  setResult(null)
+                }}
+                onKeyDown={(event) => {
+                  if (!isUrlLocked) return
+                  const key = event.key
+                  const lowerKey = key.toLowerCase()
+                  const isModifierOnly = [
+                    "Shift",
+                    "Control",
+                    "Alt",
+                    "Meta",
+                    "CapsLock",
+                  ].includes(key)
+                  const isNavigationOrSubmit = [
+                    "Enter",
+                    "Tab",
+                    "Escape",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "ArrowUp",
+                    "ArrowDown",
+                    "Home",
+                    "End",
+                    "PageUp",
+                    "PageDown",
+                  ].includes(key)
+                  const isSafeShortcut =
+                    (event.ctrlKey || event.metaKey) &&
+                    !["x", "v", "z", "y"].includes(lowerKey)
+
+                  if (isModifierOnly || isNavigationOrSubmit || isSafeShortcut) {
+                    return
+                  }
+                  blockUrlChange(event)
+                }}
+                onBeforeInput={(event) => {
+                  if (isUrlLocked) blockUrlChange(event)
+                }}
+                onCut={(event) => {
+                  if (isUrlLocked) blockUrlChange(event)
+                }}
+                onDrop={(event) => {
+                  if (isUrlLocked) blockUrlChange(event)
+                }}
                 onChange={(event) => {
+                  if (isUrlLocked) {
+                    if (event.target.value !== value) {
+                      setLockNotice(URL_LOCK_MESSAGE)
+                    }
+                    return
+                  }
                   setValue(event.target.value)
                   if (error) setError("")
+                  if (lockNotice) setLockNotice("")
                 }}
                 placeholder="https://example.com/account"
-                className="w-full rounded-2xl border border-slate-300 bg-slate-50 p-4 text-sm outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
+                className={`w-full rounded-2xl border p-4 text-sm outline-none transition ${
+                  isUrlLocked
+                    ? "border-amber-300 bg-amber-50/40 text-slate-800 focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
+                    : "border-slate-300 bg-slate-50 focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
+                }`}
               />
             )}
 
             <p className="mt-2 text-xs text-slate-500">
-              Private client-side inspection. Content is analyzed for threat indicators without tracking.
+              {!isMessage && isUrlLocked
+                ? "URL is locked after pasting to prevent tampering. Click Clear to analyze another URL."
+                : "Private client-side inspection. Content is analyzed for threat indicators without tracking."}
             </p>
+
+            {lockNotice && (
+              <div
+                role="alert"
+                className="mt-3 flex items-start gap-2.5 rounded-2xl bg-amber-50 p-3.5 text-sm text-amber-800 border border-amber-200"
+              >
+                <Lock size={17} className="mt-0.5 shrink-0 text-amber-600" />
+                <span>{lockNotice}</span>
+              </div>
+            )}
 
             {error && (
               <div
@@ -203,6 +319,8 @@ export default function AnalyzerPage({
                   setValue("")
                   setResult(null)
                   setError("")
+                  setLockNotice("")
+                  setIsUrlLocked(false)
                 }}
                 className="inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
               >

@@ -129,7 +129,24 @@ export default function RiskResult({ result }) {
           <h2 className="mt-2 text-xl font-bold text-slate-950">
             Analysis complete
           </h2>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
+          {result.hostname && (
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+              <span className="rounded-lg bg-white/80 border border-slate-200 px-2.5 py-1 font-semibold text-slate-700">
+                Host: {result.hostname}
+              </span>
+              {result.protocol && (
+                <span className="rounded-lg bg-white/80 border border-slate-200 px-2.5 py-1 font-semibold text-slate-600">
+                  Protocol: {result.protocol}
+                </span>
+              )}
+              {result.valid === false && (
+                <span className="rounded-lg bg-red-100 border border-red-200 px-2.5 py-1 font-semibold text-red-800">
+                  Invalid URL format
+                </span>
+              )}
+            </div>
+          )}
+          <p className="mt-1.5 text-sm leading-6 text-slate-600">
             {disclaimer}
           </p>
         </div>

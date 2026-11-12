@@ -3,7 +3,12 @@ import { Pencil, Phone, Plus, Trash2, Users } from "lucide-react"
 import PageHeader from "../components/PageHeader.jsx"
 import { getContacts, saveContacts } from "../utils/contacts.js"
 
+const MAX_PHONE_DIGITS = 10
 const emptyForm = { name: "", phone: "", relationship: "" }
+
+function sanitizePhoneInput(value) {
+  return String(value || "").replace(/\D/g, "").slice(0, MAX_PHONE_DIGITS)
+}
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState(getContacts)
@@ -13,11 +18,11 @@ export default function ContactsPage() {
 
   function handleSubmit(event) {
     event.preventDefault()
-    const phone = form.phone.replace(/\s/g, "")
+    const phone = sanitizePhoneInput(form.phone)
     if (form.name.trim().length < 2)
       return setError("Enter a contact name with at least 2 characters.")
-    if (!/^\+?[0-9]{7,15}$/.test(phone))
-      return setError("Enter a valid phone number containing 7 to 15 digits.")
+    if (!/^[0-9]{7,10}$/.test(phone))
+      return setError("Enter a valid phone number containing 7 to 10 digits.")
     const contact = {
       ...form,
       phone,
@@ -36,9 +41,10 @@ export default function ContactsPage() {
   }
 
   function editContact(contact) {
+    const digits = String(contact.phone || "").replace(/\D/g, "")
     setForm({
       name: contact.name,
-      phone: contact.phone,
+      phone: digits.slice(-MAX_PHONE_DIGITS),
       relationship: contact.relationship,
     })
     setEditingId(contact.id)
@@ -70,7 +76,7 @@ export default function ContactsPage() {
           </h2>
           {[
             ["name", "Contact name", "e.g. Ananya Sharma"],
-            ["phone", "Phone number", "e.g. +919876543210"],
+            ["phone", "Phone number", "e.g. 9876543210"],
             [
               "relationship",
               "Relationship (optional)",
@@ -78,11 +84,27 @@ export default function ContactsPage() {
             ],
           ].map(([key, label, placeholder]) => (
             <label key={key} className="mt-5 block text-sm font-bold">
-              {label}
+              <span className="flex items-center justify-between">
+                <span>{label}</span>
+                {key === "phone" && (
+                  <span className="text-xs font-normal text-slate-500">
+                    {form.phone.length}/{MAX_PHONE_DIGITS} digits
+                  </span>
+                )}
+              </span>
               <input
+                type={key === "phone" ? "tel" : "text"}
+                inputMode={key === "phone" ? "numeric" : undefined}
+                maxLength={key === "phone" ? MAX_PHONE_DIGITS : undefined}
                 value={form[key]}
                 onChange={(event) =>
-                  setForm({ ...form, [key]: event.target.value })
+                  setForm({
+                    ...form,
+                    [key]:
+                      key === "phone"
+                        ? sanitizePhoneInput(event.target.value)
+                        : event.target.value,
+                  })
                 }
                 placeholder={placeholder}
                 className="mt-2 w-full rounded-xl border border-slate-300 bg-slate-50 p-3.5 text-sm font-normal outline-none focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
