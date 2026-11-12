@@ -14,6 +14,21 @@
       "createdAt": "2026-10-16T18:27:00.323Z",
       "lastLogin": "2026-10-16T18:27:00.323Z",
       "totalComparisons": 0
+    },
+    {
+      "id": "usr-super-varun",
+      "name": "Varun Reddy",
+      "email": "mvarunreddymassireddy@gmail.com",
+      "passwordHash": "04c7ffcf01be461a8f2778484767f074:14a64bd0187455254aca7de71e5dd5c0fdf5d2816e989b56ca1579ae9e7edf1d55a836d3f4d5f8b6ce001a9879622709cb7ca1d4b0fb8cfc410ab0063c6ba1ac",
+      "role": "Super Admin",
+      "status": "Active",
+      "avatar": "VR",
+      "phone": "+91 98000 11223",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": "",
+      "createdAt": "2026-11-12T08:19:00.000Z",
+      "lastLogin": "2026-11-12T08:19:00.000Z",
+      "totalComparisons": 0
     }
   ],
   "invitations": [],
