@@ -23,6 +23,7 @@ export default function AuthModal() {
     authLoading,
     closeAuthModal,
     loginWithEmail,
+    hasUserAccount,
   } = useAuth()
 
   const [mode, setMode] = useState(authModalMode || "signin")
@@ -37,32 +38,40 @@ export default function AuthModal() {
   React.useEffect(() => {
     if (authModalMode) setMode(authModalMode)
     setError("")
+    if (!authModalOpen) {
+      setPassword("")
+    }
   }, [authModalMode, authModalOpen])
 
   if (!authModalOpen) return null
+
+  const cleanEmail = email.trim().toLowerCase()
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)
+  const isExistingEmail = isValidEmail && hasUserAccount(cleanEmail)
+  const isCreatingPassword = isValidEmail ? !isExistingEmail : mode === "signup"
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
 
-    if (!email || !password) {
-      setError("Please provide both email and password.")
+    if (!isValidEmail) {
+      setError("Please enter a valid email address.")
       return
     }
 
-    if (mode === "signup" && !name.trim()) {
-      setError("Please provide your full name.")
+    if (!password) {
+      setError("Please enter a password.")
       return
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long.")
+    if (password.length > 10) {
+      setError("Password can be up to 10 characters only.")
       return
     }
 
     setSubmitting(true)
     try {
-      await loginWithEmail(email, password, mode === "signup", name)
+      await loginWithEmail(cleanEmail, password, isCreatingPassword, name)
     } catch (err) {
       setError(err.message || "Failed to authenticate.")
     } finally {
@@ -95,7 +104,13 @@ export default function AuthModal() {
               <ShieldCheck size={26} />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              {mode === "signin" ? "Sign In to SurakshaSathi" : "Create Citizen Account"}
+              {isValidEmail
+                ? isExistingEmail
+                  ? "Sign In to SurakshaSathi"
+                  : "Create Citizen Account"
+                : mode === "signin"
+                ? "Sign In to SurakshaSathi"
+                : "Create Citizen Account"}
             </h2>
             <p className="mt-1 text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
               {authModalMessage ||
@@ -113,16 +128,15 @@ export default function AuthModal() {
 
           {/* Email Form */}
           <form onSubmit={handleSubmit} className="space-y-3.5">
-            {mode === "signup" && (
+            {mode === "signup" && !isExistingEmail && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Full Name
+                  Full Name (Optional)
                 </label>
                 <div className="relative">
                   <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
-                    required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Rahul Sharma"
@@ -142,7 +156,10 @@ export default function AuthModal() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    if (error) setError("")
+                  }}
                   placeholder="name@example.com"
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition"
                 />
@@ -150,17 +167,38 @@ export default function AuthModal() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-slate-700">
+                  {isValidEmail
+                    ? isExistingEmail
+                      ? "Enter Password"
+                      : "Create Password"
+                    : mode === "signup"
+                    ? "Create Password"
+                    : "Password"}
+                </label>
+                <span className="text-[11px] font-medium text-slate-500">
+                  Up to 10 characters only ({password.length}/10)
+                </span>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   required
+                  maxLength={10}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min 6 characters"
+                  onChange={(e) => {
+                    setPassword(e.target.value.slice(0, 10))
+                    if (error) setError("")
+                  }}
+                  placeholder={
+                    isValidEmail
+                      ? isExistingEmail
+                        ? "Enter password (up to 10 characters)"
+                        : "Create password (up to 10 characters)"
+                      : "Up to 10 characters only"
+                  }
                   className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition"
                 />
                 <button
@@ -171,6 +209,17 @@ export default function AuthModal() {
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              {isValidEmail && (
+                <p
+                  className={`mt-1 text-[11px] font-medium ${
+                    isExistingEmail ? "text-teal-700" : "text-blue-600"
+                  }`}
+                >
+                  {isExistingEmail
+                    ? "Existing account detected — enter your password to sign in."
+                    : "New email detected — create a password (up to 10 characters only)."}
+                </p>
+              )}
             </div>
 
             <button
@@ -185,45 +234,51 @@ export default function AuthModal() {
                 </>
               ) : (
                 <>
-                  <span>{mode === "signin" ? "Sign In & Continue" : "Create Account & Continue"}</span>
+                  <span>
+                    {isCreatingPassword
+                      ? "Create Password & Continue"
+                      : "Sign In & Continue"}
+                  </span>
                   <ArrowRight size={15} />
                 </>
               )}
             </button>
           </form>
 
-          {/* Toggle Mode Footer */}
-          <div className="mt-5 text-center text-xs text-slate-500">
-            {mode === "signin" ? (
-              <p>
-                Don't have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode("signup")
-                    setError("")
-                  }}
-                  className="font-semibold text-slate-900 hover:underline"
-                >
-                  Sign Up Free
-                </button>
-              </p>
-            ) : (
-              <p>
-                Already have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode("signin")
-                    setError("")
-                  }}
-                  className="font-semibold text-slate-900 hover:underline"
-                >
-                  Sign In
-                </button>
-              </p>
-            )}
-          </div>
+          {/* Toggle Mode Footer (shown before a full email is detected) */}
+          {!isValidEmail && (
+            <div className="mt-5 text-center text-xs text-slate-500">
+              {mode === "signin" ? (
+                <p>
+                  Don't have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("signup")
+                      setError("")
+                    }}
+                    className="font-semibold text-slate-900 hover:underline"
+                  >
+                    Sign Up Free
+                  </button>
+                </p>
+              ) : (
+                <p>
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("signin")
+                      setError("")
+                    }}
+                    className="font-semibold text-slate-900 hover:underline"
+                  >
+                    Sign In
+                  </button>
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="mt-4 pt-4 border-t border-slate-100">
             <button

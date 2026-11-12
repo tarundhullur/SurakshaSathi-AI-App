@@ -3,9 +3,65 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 const AuthContext = createContext(null)
 
 const USER_STORAGE_KEY = "surakshasathi_user"
+const USER_ACCOUNTS_KEY = "surakshasathi_user_accounts"
 const TOKEN_STORAGE_KEY = "surakshasathi_admin_token"
 const LEGACY_TOKEN_KEY = "ridecompare_admin_token"
 export const REG_USERS_STORAGE_KEY = "surakshasathi_registered_users"
+
+function getStoredUserAccounts() {
+  try {
+    if (typeof localStorage === "undefined") return {}
+    const raw = localStorage.getItem(USER_ACCOUNTS_KEY)
+    const parsed = raw ? JSON.parse(raw) : {}
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+function saveStoredUserAccounts(accounts) {
+  try {
+    if (typeof localStorage === "undefined") return
+    localStorage.setItem(USER_ACCOUNTS_KEY, JSON.stringify(accounts))
+  } catch {}
+}
+
+function simpleDigest(str) {
+  let h1 = 0x811c9dc5
+  let h2 = 0x9e3779b9
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i)
+    h1 ^= ch
+    h1 = Math.imul(h1, 0x01000193)
+    h2 ^= ch + i
+    h2 = Math.imul(h2, 0x85ebca6b)
+  }
+  return `${(h1 >>> 0).toString(16).padStart(8, "0")}${(h2 >>> 0).toString(16).padStart(8, "0")}`
+}
+
+async function hashUserPassword(password, existingSalt = null) {
+  const salt =
+    existingSalt ||
+    Array.from(
+      globalThis.crypto?.getRandomValues?.(new Uint8Array(8)) ||
+        Array.from({ length: 8 }, () => Math.floor(Math.random() * 256)),
+      (b) => b.toString(16).padStart(2, "0")
+    ).join("")
+  if (globalThis.crypto?.subtle) {
+    const data = new TextEncoder().encode(`${salt}:${password}`)
+    const buf = await globalThis.crypto.subtle.digest("SHA-256", data)
+    const hex = Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, "0")).join("")
+    return `${salt}:${hex}`
+  }
+  return `${salt}:fb:${simpleDigest(`${salt}:${password}`)}`
+}
+
+async function verifyUserPassword(password, storedHash) {
+  if (!storedHash || !storedHash.includes(":")) return false
+  const salt = storedHash.split(":")[0]
+  const recomputed = await hashUserPassword(password, salt)
+  return recomputed === storedHash
+}
 
 // Helper to record a real logged-in user to persistent storage
 export function saveRealUserToStorage(userData) {
@@ -242,34 +298,92 @@ export function AuthProvider({ children }) {
     return userObj
   }
 
+  const hasUserAccount = useCallback((email) => {
+    const cleanEmail = (email || "").trim().toLowerCase()
+    if (!cleanEmail) return false
+    const accounts = getStoredUserAccounts()
+    return Boolean(accounts[cleanEmail])
+  }, [])
+
   // 3. Email & Password Sign In / Sign Up
-  const loginWithEmail = async (email, password, isSignUp = false, name = "") => {
+  const loginWithEmail = async (email, password, _isSignUp = false, name = "") => {
     setAuthLoading(true)
-    await new Promise((res) => setTimeout(res, 350))
+    try {
+      await new Promise((res) => setTimeout(res, 250))
 
-    const cleanEmail = email.trim().toLowerCase()
-    const cleanName = name.trim() || cleanEmail.split("@")[0]
+      const cleanEmail = (email || "").trim().toLowerCase()
+      if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+        throw new Error("Please enter a valid email address.")
+      }
+      if (!password) {
+        throw new Error("Please enter a password.")
+      }
+      if (password.length > 10) {
+        throw new Error("Password can be up to 10 characters only.")
+      }
 
-    // Determine role: if email is super admin or admin credentials
-    const isSuperAdmin = cleanEmail === "tarundhullur06@gmail.com"
-    const isAdminEmail = cleanEmail.includes("admin") || isSuperAdmin
-    const userRole = isSuperAdmin ? "Super Admin" : (isAdminEmail ? "Admin" : "User")
+      const accounts = getStoredUserAccounts()
+      const existingAccount = accounts[cleanEmail]
 
-    const userObj = {
-      id: `usr-em-${Date.now().toString(36)}`,
-      name: cleanName,
-      email: cleanEmail,
-      avatar: cleanName.slice(0, 2).toUpperCase() || "US",
-      provider: "email",
-      role: userRole,
-      phone: "",
-      joinedOn: new Date().toISOString(),
-      activityCount: 0,
+      if (existingAccount) {
+        const valid = await verifyUserPassword(password, existingAccount.passwordHash)
+        if (!valid) {
+          throw new Error("Incorrect password. Please enter the correct password.")
+        }
+
+        const userObj = {
+          id: existingAccount.id,
+          name: existingAccount.name,
+          email: cleanEmail,
+          avatar: existingAccount.avatar || existingAccount.name.slice(0, 2).toUpperCase() || "US",
+          provider: "email",
+          role: existingAccount.role || "User",
+          phone: "",
+          joinedOn: existingAccount.createdAt || new Date().toISOString(),
+          activityCount: 0,
+        }
+
+        completeAuth(userObj)
+        return userObj
+      }
+
+      const cleanName = name.trim() || cleanEmail.split("@")[0]
+      const isSuperAdmin = cleanEmail === "tarundhullur06@gmail.com"
+      const isAdminEmail = cleanEmail.includes("admin") || isSuperAdmin
+      const userRole = isSuperAdmin ? "Super Admin" : isAdminEmail ? "Admin" : "User"
+      const nowIso = new Date().toISOString()
+      const passwordHash = await hashUserPassword(password)
+      const userId = `usr-em-${Date.now().toString(36)}`
+      const avatar = cleanName.slice(0, 2).toUpperCase() || "US"
+
+      accounts[cleanEmail] = {
+        id: userId,
+        name: cleanName,
+        email: cleanEmail,
+        avatar,
+        role: userRole,
+        passwordHash,
+        createdAt: nowIso,
+      }
+      saveStoredUserAccounts(accounts)
+
+      const userObj = {
+        id: userId,
+        name: cleanName,
+        email: cleanEmail,
+        avatar,
+        provider: "email",
+        role: userRole,
+        phone: "",
+        joinedOn: nowIso,
+        activityCount: 0,
+      }
+
+      completeAuth(userObj)
+      return userObj
+    } finally {
+      setAuthLoading(false)
     }
-
-    completeAuth(userObj)
-    setAuthLoading(false)
-    return userObj
   }
 
   // 4. Logout
@@ -317,6 +431,7 @@ export function AuthProvider({ children }) {
         loginWithGoogle,
         loginWithGithub,
         loginWithEmail,
+        hasUserAccount,
         logout,
       }}
     >
