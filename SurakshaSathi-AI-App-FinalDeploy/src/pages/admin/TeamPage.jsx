@@ -203,11 +203,11 @@ export default function TeamPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Users className="w-6 h-6 text-cyan-400" />
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <Users className="w-6 h-6 text-cyan-600" />
             <span>Admin Team Management</span>
           </h1>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-slate-500">
             Control platform administration access, manage team member roles, and issue cryptographically secure invitations.
           </p>
         </div>
@@ -228,61 +228,61 @@ export default function TeamPage() {
 
       {/* Row 1: Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Total Team
             </span>
-            <span className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+            <span className="p-2 rounded-xl bg-blue-50 text-blue-600">
               <Users className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white tracking-tight">
+          <div className="mt-3 text-2xl font-bold text-slate-900 tracking-tight">
             {teamMembers.length}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">Authorized personnel</p>
         </div>
 
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Super Admins
             </span>
-            <span className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+            <span className="p-2 rounded-xl bg-purple-50 text-purple-600">
               <ShieldCheck className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white tracking-tight">
+          <div className="mt-3 text-2xl font-bold text-slate-900 tracking-tight">
             {superAdminCount}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">Full platform ownership</p>
         </div>
 
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Admins & Moderators
             </span>
-            <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+            <span className="p-2 rounded-xl bg-cyan-50 text-cyan-600">
               <KeyRound className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white tracking-tight">
+          <div className="mt-3 text-2xl font-bold text-slate-900 tracking-tight">
             {adminCount + moderatorCount}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">Operations & review</p>
         </div>
 
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Pending Invites
             </span>
-            <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+            <span className="p-2 rounded-xl bg-amber-50 text-amber-600">
               <Clock className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white tracking-tight">
+          <div className="mt-3 text-2xl font-bold text-slate-900 tracking-tight">
             {pendingInvitesCount}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">Awaiting registration</p>
@@ -290,17 +290,17 @@ export default function TeamPage() {
       </div>
 
       {/* Tabs Switcher: Active Team Members vs Pending Invitations */}
-      <div className="flex items-center gap-2 border-b border-[#1E293B] pb-3">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
         <button
           onClick={() => setActiveTab("members")}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
             activeTab === "members"
-              ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-              : "text-slate-400 hover:text-white bg-[#0F172A] border border-[#1E293B]"
+              ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+              : "text-slate-500 hover:text-slate-900 bg-white border border-slate-200"
           }`}
         >
           <span>Active Team Members</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-black/30 font-semibold">
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-200/70 font-semibold">
             {teamMembers.length}
           </span>
         </button>
@@ -309,23 +309,23 @@ export default function TeamPage() {
           onClick={() => setActiveTab("invitations")}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
             activeTab === "invitations"
-              ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/30"
-              : "text-slate-400 hover:text-white bg-[#0F172A] border border-[#1E293B]"
+              ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/20"
+              : "text-slate-500 hover:text-slate-900 bg-white border border-slate-200"
           }`}
         >
           <Mail className="w-3.5 h-3.5" />
           <span>Pending Invitations</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-black/30 font-semibold">
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-200/70 font-semibold">
             {pendingInvitesCount}
           </span>
         </button>
 
         <button
           onClick={loadData}
-          className="ml-auto p-2 rounded-xl bg-[#0F172A] border border-[#1E293B] text-slate-400 hover:text-white transition"
+          className="ml-auto p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900 transition"
           title="Refresh"
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-cyan-400" : ""}`} />
+          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-cyan-600" : ""}`} />
         </button>
       </div>
 
@@ -333,7 +333,7 @@ export default function TeamPage() {
       {activeTab === "members" && (
         <div className="space-y-4">
           {/* Search & Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0F172A] border border-[#1E293B] p-3 rounded-2xl">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white border border-slate-200 p-3 rounded-2xl">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <input
@@ -341,7 +341,7 @@ export default function TeamPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search team members by name or email..."
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#131D38] border border-[#1E293B] text-white text-xs placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:border-cyan-400"
               />
             </div>
 
@@ -350,7 +350,7 @@ export default function TeamPage() {
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="bg-[#131D38] border border-[#1E293B] text-white text-xs py-2 px-3 rounded-xl focus:outline-none focus:border-cyan-400"
+                className="bg-slate-50 border border-slate-200 text-slate-900 text-xs py-2 px-3 rounded-xl focus:outline-none focus:border-cyan-400"
               >
                 <option value="All">All Roles</option>
                 <option value="Super Admin">Super Admin</option>
@@ -361,10 +361,10 @@ export default function TeamPage() {
           </div>
 
           {/* Members Table */}
-          <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] overflow-hidden shadow-lg shadow-black/20">
+          <div className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="bg-[#131D38] text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-[#1E293B]">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                   <tr>
                     <th className="py-3 px-4">Member Name</th>
                     <th className="py-3 px-4">Email</th>
@@ -374,20 +374,20 @@ export default function TeamPage() {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1E293B]">
+                <tbody className="divide-y divide-slate-200">
                   {filteredMembers.map((member) => (
-                    <tr key={member.id} className="hover:bg-[#131D38]/50 transition">
-                      <td className="py-3.5 px-4 font-medium text-white flex items-center gap-3">
+                    <tr key={member.id} className="hover:bg-slate-50 transition">
+                      <td className="py-3.5 px-4 font-medium text-slate-900 flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 text-white font-bold flex items-center justify-center text-xs shadow-sm">
                           {member.avatar || member.name?.slice(0, 2).toUpperCase() || "AD"}
                         </div>
                         <div>
                           <span className="block font-semibold">{member.name}</span>
-                          <span className="block text-[10px] text-slate-400">{member.id}</span>
+                          <span className="block text-[10px] text-slate-500">{member.id}</span>
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-4 font-mono text-[11px] text-slate-300">
+                      <td className="py-3.5 px-4 font-mono text-[11px] text-slate-700">
                         {member.email}
                       </td>
 
@@ -395,10 +395,10 @@ export default function TeamPage() {
                         <span
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                             member.role === "Super Admin"
-                              ? "bg-purple-500/10 text-purple-300 border border-purple-500/30"
+                              ? "bg-purple-50 text-purple-700 border border-purple-300"
                               : member.role === "Moderator"
-                              ? "bg-teal-500/10 text-teal-300 border border-teal-500/30"
-                              : "bg-blue-500/10 text-blue-300 border border-blue-500/30"
+                              ? "bg-teal-50 text-teal-700 border border-teal-300"
+                              : "bg-blue-50 text-blue-700 border border-blue-300"
                           }`}
                         >
                           <Shield className="w-3 h-3" />
@@ -408,12 +408,12 @@ export default function TeamPage() {
 
                       <td className="py-3.5 px-4">
                         {member.twoFactorEnabled ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
                             <ShieldCheck className="w-3.5 h-3.5" />
                             <span>Enabled</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] text-slate-400">
+                          <span className="inline-flex items-center gap-1 text-[11px] text-slate-500">
                             <Clock className="w-3.5 h-3.5" />
                             <span>Optional</span>
                           </span>
@@ -433,7 +433,7 @@ export default function TeamPage() {
                                 setEditRole(member.role)
                                 setEditMemberModalOpen(true)
                               }}
-                              className="px-2.5 py-1 rounded-lg bg-[#1E293B] hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-[11px] transition"
+                              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 font-medium text-[11px] transition"
                             >
                               Edit Role
                             </button>
@@ -441,15 +441,15 @@ export default function TeamPage() {
                               onClick={() => handleToggleMemberStatus(member)}
                               className={`px-2.5 py-1 rounded-lg font-medium text-[11px] transition border ${
                                 member.status === "Active"
-                                  ? "bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border-rose-500/20"
-                                  : "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/20"
+                                  ? "bg-rose-50 hover:bg-rose-500/20 text-rose-600 border-rose-200"
+                                  : "bg-emerald-50 hover:bg-emerald-500/20 text-emerald-600 border-emerald-200"
                               }`}
                             >
                               {member.status === "Active" ? "Revoke Access" : "Restore Access"}
                             </button>
                           </>
                         ) : (
-                          <span className="text-[10px] text-purple-400/80 font-semibold px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">
+                          <span className="text-[10px] text-purple-600 font-semibold px-2 py-0.5 rounded bg-purple-50 border border-purple-200">
                             Owner
                           </span>
                         )}
@@ -466,19 +466,19 @@ export default function TeamPage() {
       {/* TAB 2: PENDING INVITATIONS */}
       {activeTab === "invitations" && (
         <div className="space-y-4">
-          <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] overflow-hidden shadow-lg shadow-black/20">
+          <div className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm">
             {invitations.length === 0 ? (
-              <div className="p-8 text-center text-slate-400">
+              <div className="p-8 text-center text-slate-500">
                 <Mail className="w-10 h-10 mx-auto text-slate-600 mb-2" />
-                <p className="text-sm font-semibold text-white">No active invitations found</p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-sm font-semibold text-slate-900">No active invitations found</p>
+                <p className="text-xs text-slate-500 mt-1">
                   Click "Invite Team Member" above to generate a secure, single-use onboarding link.
                 </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-[#131D38] text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-[#1E293B]">
+                <table className="w-full text-left text-xs text-slate-700">
+                  <thead className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                     <tr>
                       <th className="py-3 px-4">Invited Email</th>
                       <th className="py-3 px-4">Role Assigned</th>
@@ -487,41 +487,41 @@ export default function TeamPage() {
                       <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#1E293B]">
+                  <tbody className="divide-y divide-slate-200">
                     {invitations.map((inv) => {
                       const isExpired = new Date(inv.expiresAt) < new Date()
                       const inviteLink = `${window.location.origin}/admin/invite/accept?token=${inv.token}`
 
                       return (
-                        <tr key={inv.id} className="hover:bg-[#131D38]/50 transition">
-                          <td className="py-3 px-4 font-mono text-white font-medium">
+                        <tr key={inv.id} className="hover:bg-slate-50 transition">
+                          <td className="py-3 px-4 font-mono text-slate-900 font-medium">
                             {inv.email}
                           </td>
                           <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-300 border border-blue-500/30">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-300">
                               {inv.role}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-slate-400 font-mono text-[11px]">
+                          <td className="py-3 px-4 text-slate-500 font-mono text-[11px]">
                             {isExpired
                               ? "Expired"
                               : new Date(inv.expiresAt).toLocaleDateString() + " 48h"}
                           </td>
                           <td className="py-3 px-4">
                             {inv.isRevoked ? (
-                              <span className="text-rose-400 text-[10px] font-bold uppercase">
+                              <span className="text-rose-600 text-[10px] font-bold uppercase">
                                 Revoked
                               </span>
                             ) : inv.isUsed ? (
-                              <span className="text-emerald-400 text-[10px] font-bold uppercase">
+                              <span className="text-emerald-600 text-[10px] font-bold uppercase">
                                 Registered
                               </span>
                             ) : isExpired ? (
-                              <span className="text-amber-400 text-[10px] font-bold uppercase">
+                              <span className="text-amber-600 text-[10px] font-bold uppercase">
                                 Expired
                               </span>
                             ) : (
-                              <span className="text-cyan-400 text-[10px] font-bold uppercase">
+                              <span className="text-cyan-600 text-[10px] font-bold uppercase">
                                 Pending Single-Use
                               </span>
                             )}
@@ -531,14 +531,14 @@ export default function TeamPage() {
                               <>
                                 <button
                                   onClick={() => handleCopy(inviteLink)}
-                                  className="px-2.5 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-medium text-[11px] transition inline-flex items-center gap-1 border border-blue-500/30"
+                                  className="px-2.5 py-1 rounded-lg bg-blue-100 hover:bg-blue-600/30 text-blue-700 font-medium text-[11px] transition inline-flex items-center gap-1 border border-blue-300"
                                 >
                                   <Copy className="w-3 h-3" />
                                   <span>Copy Link</span>
                                 </button>
                                 <button
                                   onClick={() => handleRevokeInvitation(inv.id, inv.email)}
-                                  className="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-medium text-[11px] transition inline-flex items-center gap-1 border border-rose-500/20"
+                                  className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-500/20 text-rose-600 font-medium text-[11px] transition inline-flex items-center gap-1 border border-rose-200"
                                 >
                                   <Ban className="w-3 h-3" />
                                   <span>Revoke</span>
@@ -565,12 +565,12 @@ export default function TeamPage() {
       >
         {!generatedInvite ? (
           <form onSubmit={handleCreateInvitation} className="space-y-4">
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-700 leading-relaxed">
               Generate a time-limited, single-use invitation token. The invitee can complete registration via Google, GitHub, or Password to automatically join the administrative portal.
             </p>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Colleague Email Address
               </label>
               <input
@@ -579,18 +579,18 @@ export default function TeamPage() {
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 placeholder="colleague@example.com"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#131D38] border border-[#1E293B] text-white text-xs placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:border-cyan-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Assigned Administrative Role
               </label>
               <select
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#131D38] border border-[#1E293B] text-white text-xs focus:outline-none focus:border-cyan-400"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-cyan-400"
               >
                 <option value="Admin">Admin (Full Access to Users, Rides, Logs & Settings)</option>
                 <option value="Moderator">Moderator (Review Safety Scans & User Activity)</option>
@@ -602,7 +602,7 @@ export default function TeamPage() {
               <button
                 type="button"
                 onClick={() => setIsInviteModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-[#131D38] text-slate-300 hover:text-white text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold"
               >
                 Cancel
               </button>
@@ -617,13 +617,13 @@ export default function TeamPage() {
           </form>
         ) : (
           <div className="space-y-4">
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-semibold flex items-center gap-2">
               <Check className="w-4 h-4" />
               <span>Invitation Token Generated Successfully! (Valid for 48 Hours)</span>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Single-Use Invitation URL
               </label>
               <div className="flex items-center gap-2">
@@ -631,7 +631,7 @@ export default function TeamPage() {
                   type="text"
                   readOnly
                   value={generatedInvite.url}
-                  className="w-full px-3 py-2 rounded-xl bg-[#09101F] border border-cyan-500/30 text-cyan-300 font-mono text-[11px] select-all outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-cyan-300 text-cyan-700 font-mono text-[11px] select-all outline-none"
                 />
                 <button
                   type="button"
@@ -644,15 +644,15 @@ export default function TeamPage() {
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Send this link to <strong className="text-white">{generatedInvite.email}</strong>. Once they accept via Google, GitHub, or Password, their account will be automatically activated with the role <span className="text-cyan-400 font-semibold">{generatedInvite.role}</span>.
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Send this link to <strong className="text-slate-900">{generatedInvite.email}</strong>. Once they accept via Google, GitHub, or Password, their account will be automatically activated with the role <span className="text-cyan-600 font-semibold">{generatedInvite.role}</span>.
             </p>
 
             <div className="flex justify-end pt-2">
               <button
                 type="button"
                 onClick={() => setIsInviteModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold"
               >
                 Done
               </button>
@@ -668,18 +668,18 @@ export default function TeamPage() {
         title="Update Administrator Role"
       >
         <div className="space-y-4">
-          <p className="text-xs text-slate-300">
-            Updating administrative permissions for <strong className="text-white">{selectedMember?.name}</strong> ({selectedMember?.email}).
+          <p className="text-xs text-slate-700">
+            Updating administrative permissions for <strong className="text-slate-900">{selectedMember?.name}</strong> ({selectedMember?.email}).
           </p>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Select New Role
             </label>
             <select
               value={editRole}
               onChange={(e) => setEditRole(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#131D38] border border-[#1E293B] text-white text-xs focus:outline-none focus:border-cyan-400"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-cyan-400"
             >
               <option value="Admin">Admin (Full Operational Privileges)</option>
               <option value="Moderator">Moderator (Review Scans & Public Activity)</option>
@@ -693,7 +693,7 @@ export default function TeamPage() {
             <button
               type="button"
               onClick={() => setEditMemberModalOpen(false)}
-              className="px-4 py-2 rounded-xl bg-[#131D38] text-slate-300 hover:text-white text-xs font-semibold"
+              className="px-4 py-2 rounded-xl bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold"
             >
               Cancel
             </button>

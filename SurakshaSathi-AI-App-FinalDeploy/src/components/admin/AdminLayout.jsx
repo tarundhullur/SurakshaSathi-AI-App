@@ -8,7 +8,7 @@ export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-[#070D1A] text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
       <ToastContainer />
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

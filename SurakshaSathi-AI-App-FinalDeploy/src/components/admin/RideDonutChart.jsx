@@ -47,9 +47,9 @@ export default function RideDonutChart({
   })
 
   return (
-    <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 md:p-6 shadow-lg shadow-black/20 flex flex-col justify-between">
+    <div className="rounded-2xl bg-white border border-slate-200 p-5 md:p-6 shadow-sm flex flex-col justify-between">
       <div className="flex items-center justify-between pb-2">
-        <h3 className="text-base font-bold text-white tracking-tight">
+        <h3 className="text-base font-bold text-slate-900 tracking-tight">
           Safety Tool Usage Distribution
         </h3>
       </div>
@@ -68,7 +68,7 @@ export default function RideDonutChart({
             cy={center}
             r={radius}
             fill="transparent"
-            stroke="#151F33"
+            stroke="#E2E8F0"
             strokeWidth={strokeWidth}
           />
 
@@ -97,19 +97,19 @@ export default function RideDonutChart({
 
         {/* Center Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-          <span className="text-xl md:text-2xl font-extrabold text-white tracking-tight">
+          <span className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
             {hoveredCategory
               ? categories.find((c) => c.name === hoveredCategory)?.count.toLocaleString()
               : totalInspectionsFormatted}
           </span>
-          <span className="text-[11px] font-medium text-slate-400 mt-0.5">
+          <span className="text-[11px] font-medium text-slate-500 mt-0.5">
             {hoveredCategory ? hoveredCategory : "Safety Inspections"}
           </span>
         </div>
       </div>
 
       {/* Legend below */}
-      <div className="grid grid-cols-1 gap-y-2 pt-3 border-t border-[#1E293B]">
+      <div className="grid grid-cols-1 gap-y-2 pt-3 border-t border-slate-200">
         {categories.map((cat) => {
           const isHovered = hoveredCategory === cat.name
           return (
@@ -118,7 +118,7 @@ export default function RideDonutChart({
               onMouseEnter={() => setHoveredCategory(cat.name)}
               onMouseLeave={() => setHoveredCategory(null)}
               className={`flex items-center justify-between text-xs px-2.5 py-1.5 rounded-lg cursor-pointer transition ${
-                isHovered ? "bg-[#1E293B]" : "hover:bg-[#1E293B]/40"
+                isHovered ? "bg-slate-100" : "hover:bg-slate-50"
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -126,9 +126,9 @@ export default function RideDonutChart({
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: cat.color }}
                 />
-                <span className="text-slate-300 font-medium">{cat.name}</span>
+                <span className="text-slate-700 font-medium">{cat.name}</span>
               </div>
-              <span className="font-bold text-white">{cat.percentage}%</span>
+              <span className="font-bold text-slate-900">{cat.percentage}%</span>
             </div>
           )
         })}

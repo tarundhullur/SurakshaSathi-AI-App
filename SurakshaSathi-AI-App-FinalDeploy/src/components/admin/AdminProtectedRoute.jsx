@@ -82,17 +82,17 @@ export default function AdminProtectedRoute({ children, requiredPermission }) {
   // 3. Check specific granular permission if required
   if (requiredPermission && !hasPermission(requiredPermission)) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center text-white">
-        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 shadow-xl">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center text-slate-900">
+        <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mb-4 shadow-sm">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-bold tracking-tight">Insufficient Permissions</h2>
-        <p className="mt-2 text-sm text-slate-400 max-w-md">
-          Your role (<span className="text-white font-medium">{adminUser?.role}</span>) does not grant the required permission: <code className="text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded text-xs">{requiredPermission}</code>
+        <h2 className="text-xl font-bold tracking-tight text-slate-900">Insufficient Permissions</h2>
+        <p className="mt-2 text-sm text-slate-600 max-w-md">
+          Your role (<span className="text-slate-900 font-semibold">{adminUser?.role}</span>) does not grant the required permission: <code className="text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded text-xs">{requiredPermission}</code>
         </p>
         <Link
           to="/admin"
-          className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition border border-slate-700"
+          className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition border border-slate-300 shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Admin Dashboard

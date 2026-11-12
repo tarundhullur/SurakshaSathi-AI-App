@@ -121,38 +121,38 @@ export default function AdminAcceptInvitePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#070D1A] flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-100 font-sans selection:bg-blue-600 selection:text-white relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-900 font-sans selection:bg-blue-600 selection:text-white relative overflow-hidden">
       {/* Background radial glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-50 blur-[140px] rounded-full pointer-events-none" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md z-10 px-4">
         {/* Brand header */}
         <div className="flex flex-col items-center text-center">
-          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 shadow-xl shadow-cyan-500/25 mb-4">
+          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 shadow-lg shadow-cyan-500/20 mb-4">
             <ShieldCheck className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Team Member Invitation
           </h1>
-          <p className="mt-1.5 text-xs text-slate-400">
+          <p className="mt-1.5 text-xs text-slate-500">
             Accept your invitation to join the SurakshaSathi Administrative Team.
           </p>
         </div>
 
         {/* Card */}
-        <div className="mt-8 bg-[#0F172A] border border-[#1E293B] py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
+        <div className="mt-8 bg-white border border-slate-200 py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
           {verifying ? (
             <div className="py-12 flex flex-col items-center justify-center text-center">
-              <Loader2 className="w-8 h-8 text-blue-400 animate-spin mb-3" />
-              <p className="text-xs text-slate-400">Verifying secure invitation token...</p>
+              <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-3" />
+              <p className="text-xs text-slate-500">Verifying secure invitation token...</p>
             </div>
           ) : verifyError ? (
             <div className="text-center py-6">
-              <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto mb-4">
                 <AlertCircle className="w-6 h-6" />
               </div>
-              <h2 className="text-base font-bold text-white mb-2">Invalid or Expired Invitation</h2>
-              <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+              <h2 className="text-base font-bold text-slate-900 mb-2">Invalid or Expired Invitation</h2>
+              <p className="text-xs text-slate-500 mb-6 leading-relaxed">
                 {verifyError}
               </p>
               <Link
@@ -165,22 +165,22 @@ export default function AdminAcceptInvitePage() {
           ) : (
             <div>
               {/* Invitation Verified Banner */}
-              <div className="mb-6 p-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-xs">
-                <div className="flex items-center gap-2 text-cyan-300 font-semibold mb-1">
+              <div className="mb-6 p-3.5 rounded-xl bg-cyan-50 border border-cyan-200 text-xs">
+                <div className="flex items-center gap-2 text-cyan-700 font-semibold mb-1">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Authorized Invitation Verified</span>
                 </div>
-                <div className="text-slate-300">
-                  Email: <span className="text-white font-medium">{invitationInfo.email}</span>
+                <div className="text-slate-700">
+                  Email: <span className="text-slate-900 font-medium">{invitationInfo.email}</span>
                 </div>
-                <div className="text-slate-300 mt-0.5">
+                <div className="text-slate-700 mt-0.5">
                   Assigned Role:{" "}
-                  <span className="text-cyan-400 font-semibold">{invitationInfo.role}</span>
+                  <span className="text-cyan-600 font-semibold">{invitationInfo.role}</span>
                 </div>
               </div>
 
               {submitError && (
-                <div className="mb-5 flex items-start gap-2.5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
+                <div className="mb-5 flex items-start gap-2.5 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs">
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>{submitError}</span>
                 </div>
@@ -192,7 +192,7 @@ export default function AdminAcceptInvitePage() {
                   type="button"
                   disabled={submitting}
                   onClick={() => handleOAuthAccept("google")}
-                  className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-[#131D38] hover:bg-[#1E293B] border border-[#1E293B] hover:border-slate-600 transition"
+                  className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl text-xs font-semibold text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path
@@ -219,9 +219,9 @@ export default function AdminAcceptInvitePage() {
                   type="button"
                   disabled={submitting}
                   onClick={() => handleOAuthAccept("github")}
-                  className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-[#131D38] hover:bg-[#1E293B] border border-[#1E293B] hover:border-slate-600 transition"
+                  className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl text-xs font-semibold text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition"
                 >
-                  <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 fill-current text-slate-900" viewBox="0 0 24 24">
                     <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                   </svg>
                   <span>Accept & Join via GitHub</span>
@@ -229,20 +229,20 @@ export default function AdminAcceptInvitePage() {
               </div>
 
               <div className="relative flex items-center justify-center my-4">
-                <div className="border-t border-[#1E293B] w-full" />
-                <span className="bg-[#0F172A] px-3 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                <div className="border-t border-slate-200 w-full" />
+                <span className="bg-white px-3 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                   Or set password
                 </span>
-                <div className="border-t border-[#1E293B] w-full" />
+                <div className="border-t border-slate-200 w-full" />
               </div>
 
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Your Full Name
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                       <User className="w-4 h-4" />
                     </div>
                     <input
@@ -251,17 +251,17 @@ export default function AdminAcceptInvitePage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Sarah Jenkins"
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Create Password (min 8 characters)
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                       <Lock className="w-4 h-4" />
                     </div>
                     <input
@@ -270,12 +270,12 @@ export default function AdminAcceptInvitePage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition"
+                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition"
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-900 transition"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -283,11 +283,11 @@ export default function AdminAcceptInvitePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                       <Lock className="w-4 h-4" />
                     </div>
                     <input
@@ -296,7 +296,7 @@ export default function AdminAcceptInvitePage() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition"
                     />
                   </div>
                 </div>
@@ -305,7 +305,7 @@ export default function AdminAcceptInvitePage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-600/30 transition disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-600/20 transition disabled:opacity-50"
                   >
                     {submitting ? (
                       <>
@@ -329,7 +329,7 @@ export default function AdminAcceptInvitePage() {
         <div className="mt-6 text-center">
           <Link
             to="/admin/login"
-            className="inline-flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-cyan-400 transition"
+            className="inline-flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-cyan-400 transition"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             <span>Already have an account? Sign In</span>

@@ -65,14 +65,14 @@ export default function UserGrowthChart({
   const yTicks = [maxValue, Math.round(maxValue * 0.75), Math.round(maxValue * 0.5), Math.round(maxValue * 0.25), 0]
 
   return (
-    <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 md:p-6 shadow-lg shadow-black/20 flex flex-col justify-between">
+    <div className="rounded-2xl bg-white border border-slate-200 p-5 md:p-6 shadow-sm flex flex-col justify-between">
       {/* Header & Filter */}
       <div className="flex items-center justify-between pb-3">
         <div>
-          <h3 className="text-base font-bold text-white tracking-tight">
+          <h3 className="text-base font-bold text-slate-900 tracking-tight">
             {chartData.title || "User Growth"}
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             {chartData.subtitle || "New users over the last 7 days"}
           </p>
         </div>
@@ -81,14 +81,14 @@ export default function UserGrowthChart({
         <div className="relative">
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#131D38] border border-[#1E293B] hover:border-slate-600 text-xs font-semibold text-slate-200 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 transition"
           >
             <span>{timeRange === "7d" ? "7 Days" : timeRange === "30d" ? "30 Days" : "90 Days"}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-1.5 w-32 rounded-xl bg-[#0F172A] border border-[#1E293B] shadow-xl py-1 z-30">
+            <div className="absolute right-0 mt-1.5 w-32 rounded-xl bg-white border border-slate-200 shadow-lg py-1 z-30">
               {[
                 { id: "7d", label: "7 Days" },
                 { id: "30d", label: "30 Days" },
@@ -100,8 +100,8 @@ export default function UserGrowthChart({
                     onTimeRangeChange?.(opt.id)
                     setDropdownOpen(false)
                   }}
-                  className={`w-full text-left px-3 py-1.5 text-xs font-medium transition hover:bg-[#1E293B] ${
-                    timeRange === opt.id ? "text-blue-400 font-bold bg-[#1E293B]/50" : "text-slate-300"
+                  className={`w-full text-left px-3 py-1.5 text-xs font-medium transition hover:bg-slate-50 ${
+                    timeRange === opt.id ? "text-blue-600 font-bold bg-blue-50" : "text-slate-700"
                   }`}
                 >
                   {opt.label}
@@ -120,11 +120,11 @@ export default function UserGrowthChart({
         >
           <defs>
             <linearGradient id="userGrowthGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#2563EB" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
             </linearGradient>
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#3B82F6" floodOpacity="0.5" />
+              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#2563EB" floodOpacity="0.25" />
             </filter>
           </defs>
 
@@ -138,7 +138,7 @@ export default function UserGrowthChart({
                   y1={yPos}
                   x2={width - paddingRight}
                   y2={yPos}
-                  stroke="#1E293B"
+                  stroke="#E2E8F0"
                   strokeDasharray="4 4"
                   strokeWidth="1"
                 />
@@ -163,7 +163,7 @@ export default function UserGrowthChart({
           <path
             d={linePath}
             fill="none"
-            stroke="#3B82F6"
+            stroke="#2563EB"
             strokeWidth="3"
             strokeLinecap="round"
             filter="url(#glow)"
@@ -181,8 +181,8 @@ export default function UserGrowthChart({
                 cx={pt.x}
                 cy={pt.y}
                 r={hoveredIndex === i ? 6 : 4}
-                fill="#0F172A"
-                stroke="#60A5FA"
+                fill="#FFFFFF"
+                stroke="#2563EB"
                 strokeWidth={hoveredIndex === i ? 3 : 2}
                 className="transition-all duration-150"
               />
@@ -198,7 +198,7 @@ export default function UserGrowthChart({
               x={pt.x}
               y={height - 10}
               textAnchor="middle"
-              fill={hoveredIndex === i ? "#93C5FD" : "#64748B"}
+              fill={hoveredIndex === i ? "#2563EB" : "#64748B"}
               fontSize="10"
               fontWeight={hoveredIndex === i ? "bold" : "normal"}
               fontFamily="sans-serif"
@@ -211,16 +211,16 @@ export default function UserGrowthChart({
         {/* Floating tooltip on hover */}
         {hoveredIndex !== null && points[hoveredIndex] && (
           <div
-            className="absolute pointer-events-none transform -translate-x-1/2 -translate-y-full bg-slate-900 border border-blue-500/50 shadow-xl rounded-lg px-2.5 py-1 text-center z-20"
+            className="absolute pointer-events-none transform -translate-x-1/2 -translate-y-full bg-white border border-slate-200 shadow-lg rounded-lg px-2.5 py-1 text-center z-20"
             style={{
               left: `${(points[hoveredIndex].x / width) * 100}%`,
               top: `${(points[hoveredIndex].y / height) * 100 - 8}%`,
             }}
           >
-            <div className="text-[10px] text-slate-400 font-medium">
+            <div className="text-[10px] text-slate-500 font-medium">
               {points[hoveredIndex].label}
             </div>
-            <div className="text-xs font-extrabold text-blue-400">
+            <div className="text-xs font-extrabold text-blue-600">
               +{points[hoveredIndex].value} users
             </div>
           </div>

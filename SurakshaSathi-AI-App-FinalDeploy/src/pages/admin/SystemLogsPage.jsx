@@ -18,10 +18,10 @@ import { useAdminNotification } from "../../contexts/AdminNotificationContext.js
 import { fetchLogs, clearAllLogs } from "../../services/adminApi.js"
 
 const severityStyles = {
-  INFO: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  WARN: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  ERROR: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-  CRITICAL: "bg-red-600/20 text-red-300 border-red-500/40",
+  INFO: "bg-blue-50 text-blue-600 border-blue-200",
+  WARN: "bg-amber-50 text-amber-600 border-amber-200",
+  ERROR: "bg-rose-50 text-rose-600 border-rose-200",
+  CRITICAL: "bg-red-50 text-red-700 border-red-200",
 }
 
 export default function SystemLogsPage() {
@@ -105,7 +105,7 @@ export default function SystemLogsPage() {
       {/* Tab Switcher & Top Row */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         {/* Tabs */}
-        <div className="inline-flex rounded-xl bg-[#0F172A] border border-[#1E293B] p-1">
+        <div className="inline-flex rounded-xl bg-white border border-slate-200 p-1">
           {[
             { id: "All", label: "All Logs" },
             { id: "audit", label: "Admin Audit Trail" },
@@ -117,7 +117,7 @@ export default function SystemLogsPage() {
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
                 tab === t.id
                   ? "bg-blue-600 text-white shadow"
-                  : "text-slate-400 hover:text-white"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
             >
               {t.label}
@@ -129,7 +129,7 @@ export default function SystemLogsPage() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={exportLogs}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#111C35] hover:bg-[#1E293B] border border-[#1E293B] text-xs font-semibold text-slate-300 hover:text-white transition"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 transition"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export Logs</span>
@@ -138,7 +138,7 @@ export default function SystemLogsPage() {
           <Can I={PERMISSIONS.SETTINGS_WRITE}>
             <button
               onClick={() => setIsClearOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold text-rose-400 transition"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-500/20 border border-rose-200 text-xs font-semibold text-rose-600 transition"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Clear Logs</span>
@@ -150,13 +150,13 @@ export default function SystemLogsPage() {
       {/* Filter Row */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by log message, actor, or ID..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0F172A] border border-[#1E293B] focus:border-blue-500 focus:outline-none text-xs text-white placeholder-slate-500 transition"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-blue-500 focus:outline-none text-xs text-slate-900 placeholder-slate-400 transition"
           />
         </div>
 
@@ -164,7 +164,7 @@ export default function SystemLogsPage() {
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="px-3 py-2.5 rounded-xl bg-[#0F172A] border border-[#1E293B] text-xs font-semibold text-slate-300 focus:outline-none focus:border-blue-500"
+            className="px-3 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500"
           >
             <option value="All">All Severities</option>
             <option value="INFO">INFO</option>
@@ -176,7 +176,7 @@ export default function SystemLogsPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2.5 rounded-xl bg-[#0F172A] border border-[#1E293B] text-xs font-semibold text-slate-300 focus:outline-none focus:border-blue-500"
+            className="px-3 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500"
           >
             <option value="All">All Categories</option>
             <option value="user">User Actions</option>
@@ -191,11 +191,11 @@ export default function SystemLogsPage() {
       </div>
 
       {/* Logs Table */}
-      <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] shadow-xl overflow-hidden">
+      <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#1E293B] bg-[#111C35]/60 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <th className="py-3.5 px-4">Log ID & Time</th>
                 <th className="py-3.5 px-4">Severity</th>
                 <th className="py-3.5 px-4">Category</th>
@@ -204,51 +204,51 @@ export default function SystemLogsPage() {
                 <th className="py-3.5 px-4 text-right">Source IP</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B]/60 text-xs">
+            <tbody className="divide-y divide-slate-200 text-xs">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="py-12 text-center text-slate-400">
+                  <td colSpan="6" className="py-12 text-center text-slate-500">
                     <div className="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-2" />
                     <p>Fetching system logs...</p>
                   </td>
                 </tr>
               ) : logs.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-12 text-center text-slate-400">
+                  <td colSpan="6" className="py-12 text-center text-slate-500">
                     No log events found matching query.
                   </td>
                 </tr>
               ) : (
                 logs.map((l) => (
-                  <tr key={l.id} className="hover:bg-[#1E293B]/40 transition group">
+                  <tr key={l.id} className="hover:bg-slate-50 transition group">
                     <td className="py-3.5 px-4">
-                      <div className="font-mono text-[11px] font-bold text-blue-400">{l.logId}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{l.createdAt}</div>
+                      <div className="font-mono text-[11px] font-bold text-blue-600">{l.logId}</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">{l.createdAt}</div>
                     </td>
 
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
-                          severityStyles[l.severity] || "text-slate-300"
+                          severityStyles[l.severity] || "text-slate-700"
                         }`}
                       >
                         {l.severity}
                       </span>
                     </td>
 
-                    <td className="py-3.5 px-4 font-semibold text-slate-300 uppercase text-[10px] tracking-wider">
+                    <td className="py-3.5 px-4 font-semibold text-slate-700 uppercase text-[10px] tracking-wider">
                       {l.category}
                     </td>
 
-                    <td className="py-3.5 px-4 font-medium text-slate-100 max-w-md">
+                    <td className="py-3.5 px-4 font-medium text-slate-900 max-w-md">
                       {l.message}
                     </td>
 
-                    <td className="py-3.5 px-4 text-slate-300 font-semibold">
+                    <td className="py-3.5 px-4 text-slate-700 font-semibold">
                       {l.actor}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right font-mono text-[11px] text-slate-400">
+                    <td className="py-3.5 px-4 text-right font-mono text-[11px] text-slate-500">
                       {l.ip}
                     </td>
                   </tr>
@@ -259,17 +259,17 @@ export default function SystemLogsPage() {
         </div>
 
         {/* Pagination bar */}
-        <div className="flex items-center justify-between px-5 py-4 border-t border-[#1E293B] text-xs text-slate-400">
+        <div className="flex items-center justify-between px-5 py-4 border-t border-slate-200 text-xs text-slate-500">
           <div>
-            Showing <span className="font-semibold text-white">{logs.length}</span> of{" "}
-            <span className="font-semibold text-white">{pagination.total}</span> events
+            Showing <span className="font-semibold text-slate-900">{logs.length}</span> of{" "}
+            <span className="font-semibold text-slate-900">{pagination.total}</span> events
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => loadLogs(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-1.5 rounded-lg border border-[#1E293B] bg-[#111C35] text-slate-300 hover:text-white disabled:opacity-40 transition"
+              className="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:text-slate-900 disabled:opacity-40 transition"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -279,7 +279,7 @@ export default function SystemLogsPage() {
             <button
               onClick={() => loadLogs(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
-              className="p-1.5 rounded-lg border border-[#1E293B] bg-[#111C35] text-slate-300 hover:text-white disabled:opacity-40 transition"
+              className="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:text-slate-900 disabled:opacity-40 transition"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

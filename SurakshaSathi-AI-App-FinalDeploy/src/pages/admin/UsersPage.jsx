@@ -292,20 +292,20 @@ export default function UsersPage() {
       {/* 1. TOP STAT CARDS ROW */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Total Users */}
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Total Registered
             </span>
-            <span className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+            <span className="p-2 rounded-xl bg-blue-50 text-blue-600">
               <Users className="w-4 h-4" />
             </span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white tracking-tight">
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">
               {totalRegisteredCount.toLocaleString()}
             </span>
-            <span className="inline-flex items-center text-[11px] font-bold text-emerald-400 gap-0.5">
+            <span className="inline-flex items-center text-[11px] font-bold text-emerald-600 gap-0.5">
               <TrendingUp className="w-3 h-3" />
               +14.8%
             </span>
@@ -314,16 +314,16 @@ export default function UsersPage() {
         </div>
 
         {/* Active Users */}
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Active Users
             </span>
-            <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
               <CheckCircle2 className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white tracking-tight">
+          <div className="mt-3 text-2xl font-bold text-slate-900 tracking-tight">
             {activeCount.toLocaleString()}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">
@@ -332,32 +332,32 @@ export default function UsersPage() {
         </div>
 
         {/* New Users Last 7 Days */}
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               New (Last 7 Days)
             </span>
-            <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+            <span className="p-2 rounded-xl bg-cyan-50 text-cyan-600">
               <Sparkles className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white tracking-tight">
+          <div className="mt-3 text-2xl font-bold text-slate-900 tracking-tight">
             {new7DaysCount}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">Newly verified citizens</p>
         </div>
 
         {/* Inactive Users */}
-        <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-lg shadow-black/20">
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Inactive Users
             </span>
-            <span className="p-2 rounded-xl bg-slate-500/10 text-slate-400">
+            <span className="p-2 rounded-xl bg-slate-100 text-slate-500">
               <Clock className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-3 text-2xl font-bold text-white tracking-tight">
+          <div className="mt-3 text-2xl font-bold text-slate-900 tracking-tight">
             {inactiveCount}
           </div>
           <p className="mt-1 text-[11px] text-slate-500">Dormant or suspended</p>
@@ -365,16 +365,16 @@ export default function UsersPage() {
       </div>
 
       {/* 2. FILTER & SEARCH BAR */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-[#0F172A] border border-[#1E293B] p-3.5 rounded-2xl shadow-lg shadow-black/20">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, email, phone, or User ID..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#131D38] border border-[#1E293B] focus:border-cyan-400 focus:outline-none text-xs text-white placeholder-slate-500 transition"
+            className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:border-cyan-400 focus:outline-none text-xs text-slate-900 placeholder-slate-400 transition"
           />
         </div>
 
@@ -384,7 +384,7 @@ export default function UsersPage() {
           <select
             value={providerFilter}
             onChange={(e) => setProviderFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-[#131D38] border border-[#1E293B] text-xs font-semibold text-slate-300 focus:outline-none focus:border-cyan-400 transition"
+            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-cyan-400 transition"
           >
             <option value="All">All Providers</option>
             <option value="Google">Google OAuth</option>
@@ -396,7 +396,7 @@ export default function UsersPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-[#131D38] border border-[#1E293B] text-xs font-semibold text-slate-300 focus:outline-none focus:border-cyan-400 transition"
+            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-cyan-400 transition"
           >
             <option value="All">All Statuses</option>
             <option value="Active">Active</option>
@@ -407,7 +407,7 @@ export default function UsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-[#131D38] border border-[#1E293B] text-xs font-semibold text-slate-300 focus:outline-none focus:border-cyan-400 transition"
+            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-cyan-400 transition"
           >
             <option value="All">All Roles</option>
             <option value="Super Admin">Super Admin</option>
@@ -418,7 +418,7 @@ export default function UsersPage() {
           {/* Export to CSV */}
           <button
             onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#1E293B] hover:bg-slate-700 text-slate-200 text-xs font-semibold transition"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 text-xs font-semibold transition"
             title="Export table to CSV"
           >
             <Download className="w-3.5 h-3.5" />
@@ -442,11 +442,11 @@ export default function UsersPage() {
       </div>
 
       {/* 3. INTERACTIVE USER TABLE */}
-      <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] shadow-xl overflow-hidden">
+      <div className="rounded-2xl bg-white border border-slate-200 shadow-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-[#1E293B] bg-[#131D38] text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <th className="py-3.5 px-4">User ID</th>
                 <th className="py-3.5 px-4">Name & Profile</th>
                 <th className="py-3.5 px-4">Email</th>
@@ -457,17 +457,17 @@ export default function UsersPage() {
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B]">
+            <tbody className="divide-y divide-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center text-slate-400">
+                  <td colSpan="8" className="py-12 text-center text-slate-500">
                     <div className="inline-block w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mb-2" />
                     <p>Loading SurakshaSathi users...</p>
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center text-slate-400">
+                  <td colSpan="8" className="py-12 text-center text-slate-500">
                     No users found matching your search and filter criteria.
                   </td>
                 </tr>
@@ -476,10 +476,10 @@ export default function UsersPage() {
                   <tr
                     key={u.id}
                     onClick={() => setDrawerUser(u)}
-                    className="hover:bg-[#131D38]/60 cursor-pointer transition group"
+                    className="hover:bg-slate-50 cursor-pointer transition group"
                   >
                     {/* User ID */}
-                    <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400 font-medium">
+                    <td className="py-3.5 px-4 font-mono text-[11px] text-slate-500 font-medium">
                       {u.id}
                     </td>
 
@@ -494,20 +494,20 @@ export default function UsersPage() {
                           {u.avatar || u.name?.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-bold text-white group-hover:text-cyan-400 transition flex items-center gap-1.5">
+                          <div className="font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-1.5">
                             <span>{u.name}</span>
                             {u.provider === "Google" && (
-                              <span className="text-[9px] px-1 py-0.2 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-semibold">
+                              <span className="text-[9px] px-1 py-0.2 rounded bg-red-50 text-red-600 border border-red-200 font-semibold">
                                 Google
                               </span>
                             )}
                             {u.provider === "GitHub" && (
-                              <span className="text-[9px] px-1 py-0.2 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-semibold">
+                              <span className="text-[9px] px-1 py-0.2 rounded bg-purple-50 text-purple-600 border border-purple-200 font-semibold">
                                 GitHub
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+                          <div className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
                             <span>{u.role}</span>
                           </div>
                         </div>
@@ -515,17 +515,17 @@ export default function UsersPage() {
                     </td>
 
                     {/* Email */}
-                    <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
+                    <td className="py-3.5 px-4 text-slate-700 font-mono text-[11px]">
                       {u.email}
                     </td>
 
                     {/* Phone */}
-                    <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
+                    <td className="py-3.5 px-4 text-slate-700 font-mono text-[11px]">
                       {u.phone}
                     </td>
 
                     {/* Joined On */}
-                    <td className="py-3.5 px-4 text-slate-400">
+                    <td className="py-3.5 px-4 text-slate-500">
                       {u.joinedOn || "Apr 30, 2025"}
                     </td>
 
@@ -536,8 +536,8 @@ export default function UsersPage() {
 
                     {/* Total Checks */}
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1 font-bold text-white bg-slate-800/80 px-2 py-0.5 rounded-lg border border-slate-700">
-                        <Activity className="w-3 h-3 text-cyan-400" />
+                      <span className="inline-flex items-center gap-1 font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
+                        <Activity className="w-3 h-3 text-cyan-600" />
                         <span>{u.totalChecks}</span>
                       </span>
                     </td>
@@ -550,7 +550,7 @@ export default function UsersPage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => setDrawerUser(u)}
-                          className="p-1.5 text-slate-400 hover:text-cyan-400 rounded-lg hover:bg-[#1E293B] transition"
+                          className="p-1.5 text-slate-500 hover:text-cyan-400 rounded-lg hover:bg-slate-100 transition"
                           title="Open Quick Drawer"
                         >
                           <Eye className="w-4 h-4" />
@@ -558,13 +558,13 @@ export default function UsersPage() {
 
                         <button
                           onClick={() => handleToggleStatus(u)}
-                          className="p-1.5 text-slate-400 hover:text-amber-400 rounded-lg hover:bg-[#1E293B] transition"
+                          className="p-1.5 text-slate-500 hover:text-amber-400 rounded-lg hover:bg-slate-100 transition"
                           title={u.status === "Active" ? "Deactivate User" : "Activate User"}
                         >
                           {u.status === "Active" ? (
-                            <XCircle className="w-4 h-4 text-amber-400" />
+                            <XCircle className="w-4 h-4 text-amber-600" />
                           ) : (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           )}
                         </button>
 
@@ -580,7 +580,7 @@ export default function UsersPage() {
                             })
                             setIsEditOpen(true)
                           }}
-                          className="p-1.5 text-slate-400 hover:text-blue-400 rounded-lg hover:bg-[#1E293B] transition"
+                          className="p-1.5 text-slate-500 hover:text-blue-400 rounded-lg hover:bg-slate-100 transition"
                           title="Edit User"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -592,7 +592,7 @@ export default function UsersPage() {
                               setSelectedUser(u)
                               setIsDeleteOpen(true)
                             }}
-                            className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-[#1E293B] transition"
+                            className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-slate-100 transition"
                             title="Delete User"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -608,17 +608,17 @@ export default function UsersPage() {
         </div>
 
         {/* Pagination Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-t border-[#1E293B] text-xs text-slate-400 bg-[#0F172A]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-200 text-xs text-slate-500 bg-white">
           <div>
-            Showing <span className="font-semibold text-white">{users.length}</span> of{" "}
-            <span className="font-semibold text-white">{pagination.total}</span> registered users
+            Showing <span className="font-semibold text-slate-900">{users.length}</span> of{" "}
+            <span className="font-semibold text-slate-900">{pagination.total}</span> registered users
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => loadData(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-1.5 rounded-lg border border-[#1E293B] bg-[#131D38] text-slate-300 hover:text-white disabled:opacity-40 transition"
+              className="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:text-slate-900 disabled:opacity-40 transition"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -628,7 +628,7 @@ export default function UsersPage() {
             <button
               onClick={() => loadData(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
-              className="p-1.5 rounded-lg border border-[#1E293B] bg-[#131D38] text-slate-300 hover:text-white disabled:opacity-40 transition"
+              className="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:text-slate-900 disabled:opacity-40 transition"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -641,24 +641,24 @@ export default function UsersPage() {
         <div className="fixed inset-0 z-50 overflow-hidden">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={() => setDrawerUser(null)}
           />
 
           <section className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-[#0C1427] border-l border-[#1E293B] shadow-2xl flex flex-col justify-between">
+            <div className="w-screen max-w-md bg-slate-50 border-l border-slate-200 shadow-2xl flex flex-col justify-between">
               {/* Drawer Header */}
-              <div className="p-6 border-b border-[#1E293B] flex items-center justify-between bg-[#0F172A]">
+              <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
                 <div>
-                  <h2 className="text-base font-bold text-white flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-cyan-400" />
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <UserCheck className="w-5 h-5 text-cyan-600" />
                     <span>Citizen Profile & Activity</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">SurakshaSathi ID: {drawerUser.id}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">SurakshaSathi ID: {drawerUser.id}</p>
                 </div>
                 <button
                   onClick={() => setDrawerUser(null)}
-                  className="p-2 text-slate-400 hover:text-white rounded-xl bg-[#131D38] hover:bg-[#1E293B] transition"
+                  className="p-2 text-slate-500 hover:text-slate-900 rounded-xl bg-slate-50 hover:bg-slate-100 transition"
                   aria-label="Close drawer"
                 >
                   <X className="w-5 h-5" />
@@ -668,20 +668,20 @@ export default function UsersPage() {
               {/* Drawer Content Body */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {/* Profile Summary Card */}
-                <div className="p-4 rounded-2xl bg-[#0F172A] border border-[#1E293B] flex items-center gap-4">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200 flex items-center gap-4">
                   <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-lg text-white shadow-lg ${
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-lg text-white shadow-sm ${
                       drawerUser.avatarBg || "bg-gradient-to-tr from-cyan-600 to-blue-600"
                     }`}
                   >
                     {drawerUser.avatar || drawerUser.name?.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-bold text-white truncate">{drawerUser.name}</h3>
-                    <p className="text-xs text-slate-400 truncate">{drawerUser.email}</p>
+                    <h3 className="text-base font-bold text-slate-900 truncate">{drawerUser.name}</h3>
+                    <p className="text-xs text-slate-500 truncate">{drawerUser.email}</p>
                     <div className="mt-2 flex items-center gap-2">
                       <StatusBadge status={drawerUser.status} />
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200">
                         {drawerUser.role}
                       </span>
                     </div>
@@ -690,68 +690,68 @@ export default function UsersPage() {
 
                 {/* Contact & Registration Details */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     Account Details
                   </h4>
-                  <div className="bg-[#0F172A] border border-[#1E293B] rounded-2xl divide-y divide-[#1E293B] text-xs">
+                  <div className="bg-white border border-slate-200 rounded-2xl divide-y divide-slate-200 text-xs">
                     <div className="p-3.5 flex items-center justify-between">
-                      <span className="text-slate-400 flex items-center gap-2">
+                      <span className="text-slate-500 flex items-center gap-2">
                         <Phone className="w-3.5 h-3.5" />
                         <span>Phone</span>
                       </span>
-                      <span className="text-white font-mono">{drawerUser.phone}</span>
+                      <span className="text-slate-900 font-mono">{drawerUser.phone}</span>
                     </div>
                     <div className="p-3.5 flex items-center justify-between">
-                      <span className="text-slate-400 flex items-center gap-2">
+                      <span className="text-slate-500 flex items-center gap-2">
                         <KeyRound className="w-3.5 h-3.5" />
                         <span>Login Provider</span>
                       </span>
-                      <span className="text-cyan-400 font-semibold">{drawerUser.provider}</span>
+                      <span className="text-cyan-600 font-semibold">{drawerUser.provider}</span>
                     </div>
                     <div className="p-3.5 flex items-center justify-between">
-                      <span className="text-slate-400 flex items-center gap-2">
+                      <span className="text-slate-500 flex items-center gap-2">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>Joined On</span>
                       </span>
-                      <span className="text-slate-200">{drawerUser.joinedOn || "Apr 30, 2025"}</span>
+                      <span className="text-slate-800">{drawerUser.joinedOn || "Apr 30, 2025"}</span>
                     </div>
                     <div className="p-3.5 flex items-center justify-between">
-                      <span className="text-slate-400 flex items-center gap-2">
+                      <span className="text-slate-500 flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5" />
                         <span>Last Active</span>
                       </span>
-                      <span className="text-slate-200">{drawerUser.lastLogin}</span>
+                      <span className="text-slate-800">{drawerUser.lastLogin}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Activity Statistics */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     Safety Activity Statistics
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#1E293B]">
-                      <span className="text-[11px] text-slate-400">Total Checks</span>
-                      <div className="text-xl font-bold text-white mt-1">
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200">
+                      <span className="text-[11px] text-slate-500">Total Checks</span>
+                      <div className="text-xl font-bold text-slate-900 mt-1">
                         {drawerUser.totalChecks}
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#1E293B]">
-                      <span className="text-[11px] text-slate-400">Messages Checked</span>
-                      <div className="text-xl font-bold text-cyan-400 mt-1">
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200">
+                      <span className="text-[11px] text-slate-500">Messages Checked</span>
+                      <div className="text-xl font-bold text-cyan-600 mt-1">
                         {drawerUser.messagesChecked}
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#1E293B]">
-                      <span className="text-[11px] text-slate-400">Threats Blocked</span>
-                      <div className="text-xl font-bold text-amber-400 mt-1">
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200">
+                      <span className="text-[11px] text-slate-500">Threats Blocked</span>
+                      <div className="text-xl font-bold text-amber-600 mt-1">
                         {drawerUser.threatsBlocked}
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#1E293B]">
-                      <span className="text-[11px] text-slate-400">SOS Alerts</span>
-                      <div className="text-xl font-bold text-rose-400 mt-1">
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200">
+                      <span className="text-[11px] text-slate-500">SOS Alerts</span>
+                      <div className="text-xl font-bold text-rose-600 mt-1">
                         {drawerUser.sosTriggered}
                       </div>
                     </div>
@@ -760,7 +760,7 @@ export default function UsersPage() {
 
                 {/* Quick Actions in Drawer */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     Administrative Quick Actions
                   </h4>
                   <div className="space-y-2">
@@ -770,8 +770,8 @@ export default function UsersPage() {
                       disabled={actionLoading}
                       className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-between border transition ${
                         drawerUser.status === "Active"
-                          ? "bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20"
-                          : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
+                          ? "bg-amber-50 text-amber-600 border-amber-300 hover:bg-amber-500/20"
+                          : "bg-emerald-50 text-emerald-600 border-emerald-300 hover:bg-emerald-500/20"
                       }`}
                     >
                       <span className="flex items-center gap-2">
@@ -788,26 +788,26 @@ export default function UsersPage() {
                     {/* Reset Password */}
                     <button
                       onClick={() => handleResetPassword(drawerUser)}
-                      className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-[#131D38] hover:bg-[#1E293B] text-slate-200 border border-[#1E293B] flex items-center justify-between transition"
+                      className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-between transition"
                     >
                       <span className="flex items-center gap-2">
-                        <KeyRound className="w-4 h-4 text-cyan-400" />
+                        <KeyRound className="w-4 h-4 text-cyan-600" />
                         <span>Reset Password / Send Link</span>
                       </span>
-                      <Copy className="w-3.5 h-3.5 text-slate-400" />
+                      <Copy className="w-3.5 h-3.5 text-slate-500" />
                     </button>
 
                     {/* Promote to Admin Team */}
                     {drawerUser.role !== "Admin" && drawerUser.role !== "Super Admin" && (
                       <button
                         onClick={() => handlePromoteToAdmin(drawerUser)}
-                        className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-blue-600/10 hover:bg-blue-600/20 text-blue-300 border border-blue-500/30 flex items-center justify-between transition"
+                        className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-blue-50 hover:bg-blue-600/20 text-blue-700 border border-blue-300 flex items-center justify-between transition"
                       >
                         <span className="flex items-center gap-2">
-                          <ShieldCheck className="w-4 h-4 text-blue-400" />
+                          <ShieldCheck className="w-4 h-4 text-blue-600" />
                           <span>Promote to Admin Team</span>
                         </span>
-                        <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                        <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                       </button>
                     )}
                   </div>
@@ -815,10 +815,10 @@ export default function UsersPage() {
               </div>
 
               {/* Drawer Footer */}
-              <div className="p-4 border-t border-[#1E293B] bg-[#0F172A] flex items-center justify-between">
+              <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between">
                 <Link
                   to={`/admin/users/${drawerUser.id}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-600 hover:underline"
                 >
                   <span>Full Analytics Dossier</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -826,7 +826,7 @@ export default function UsersPage() {
 
                 <button
                   onClick={() => setDrawerUser(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 bg-[#131D38] hover:bg-[#1E293B]"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100"
                 >
                   Close
                 </button>
@@ -840,47 +840,47 @@ export default function UsersPage() {
       <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Register Citizen User">
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g. Aditi Rao"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
             <input
               type="email"
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="e.g. aditi@example.com"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
             <input
               type="text"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="+91 98765 00000"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Role</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Role</label>
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
               >
                 <option value="User">Citizen User</option>
                 <option value="Admin">Admin</option>
@@ -888,11 +888,11 @@ export default function UsersPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Status</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -900,18 +900,18 @@ export default function UsersPage() {
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-[#1E293B]">
+          <div className="pt-4 flex justify-end gap-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setIsAddOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 bg-[#131D38] hover:bg-[#1E293B]"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={actionLoading}
-              className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/30 disabled:opacity-60"
+              className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 disabled:opacity-60"
             >
               {actionLoading ? "Saving..." : "Register User"}
             </button>
@@ -923,44 +923,44 @@ export default function UsersPage() {
       <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Edit User Profile">
         <form onSubmit={handleEdit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
             <input
               type="email"
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
             <input
               type="text"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Role</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Role</label>
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
               >
                 <option value="User">Citizen User</option>
                 <option value="Admin">Admin</option>
@@ -969,11 +969,11 @@ export default function UsersPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Status</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl bg-[#111C35] border border-[#1E293B] text-xs text-white focus:outline-none focus:border-cyan-400"
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -981,18 +981,18 @@ export default function UsersPage() {
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-[#1E293B]">
+          <div className="pt-4 flex justify-end gap-3 border-t border-slate-200">
             <button
               type="button"
               onClick={() => setIsEditOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 bg-[#131D38] hover:bg-[#1E293B]"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={actionLoading}
-              className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/30 disabled:opacity-60"
+              className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 disabled:opacity-60"
             >
               {actionLoading ? "Saving..." : "Save Changes"}
             </button>

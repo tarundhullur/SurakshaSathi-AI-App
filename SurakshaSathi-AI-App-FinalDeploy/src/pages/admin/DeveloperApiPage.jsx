@@ -123,28 +123,28 @@ export default function DeveloperApiPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <Code2 className="w-5 h-5 text-cyan-400" />
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Code2 className="w-5 h-5 text-cyan-600" />
             Developer API & Integration Sandbox
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Explore and test the SurakshaSathi REST API endpoints with authenticated sandbox execution.
           </p>
         </div>
 
         {/* API Key Pill */}
-        <div className="flex items-center gap-2 bg-[#0F172A] border border-[#1E293B] px-3.5 py-2 rounded-xl">
-          <Key className="w-4 h-4 text-cyan-400" />
+        <div className="flex items-center gap-2 bg-white border border-slate-200 px-3.5 py-2 rounded-xl">
+          <Key className="w-4 h-4 text-cyan-600" />
           <div className="text-left">
-            <div className="text-[10px] text-slate-400 font-semibold uppercase">Active API Key</div>
-            <code className="text-xs text-slate-200 font-mono">{apiKey.slice(0, 14)}••••</code>
+            <div className="text-[10px] text-slate-500 font-semibold uppercase">Active API Key</div>
+            <code className="text-xs text-slate-800 font-mono">{apiKey.slice(0, 14)}••••</code>
           </div>
           <button
             onClick={handleCopyKey}
-            className="p-1.5 rounded-lg hover:bg-[#1E293B] text-slate-400 hover:text-white transition ml-1"
+            className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition ml-1"
             title="Copy API Key"
           >
-            {copiedKey ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedKey ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
@@ -152,13 +152,13 @@ export default function DeveloperApiPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Endpoints Directory */}
         <div className="lg:col-span-5 space-y-3">
-          <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-4 shadow-xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1E293B] mb-3">
-              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                <Layers className="w-4 h-4 text-blue-400" />
+          <div className="rounded-2xl bg-white border border-slate-200 p-4 shadow-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                <Layers className="w-4 h-4 text-blue-600" />
                 Available Endpoints
               </span>
-              <span className="text-[10px] text-slate-400">{API_ENDPOINTS.length} endpoints</span>
+              <span className="text-[10px] text-slate-500">{API_ENDPOINTS.length} endpoints</span>
             </div>
 
             <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
@@ -174,20 +174,20 @@ export default function DeveloperApiPage() {
                     }}
                     className={`w-full text-left p-3 rounded-xl border transition flex flex-col gap-1 ${
                       isSelected
-                        ? "bg-blue-600/10 border-blue-500 shadow-md"
-                        : "bg-[#111C35] border-[#1E293B] hover:border-slate-700"
+                        ? "bg-blue-50 border-blue-500 shadow-sm"
+                        : "bg-slate-50 border-slate-200 hover:border-slate-300"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 font-mono">
                           {ep.method}
                         </span>
-                        <span className="text-xs font-semibold text-white font-mono">{ep.path}</span>
+                        <span className="text-xs font-semibold text-slate-900 font-mono">{ep.path}</span>
                       </div>
                       {isSelected && <span className="w-2 h-2 rounded-full bg-blue-500" />}
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-snug">{ep.description}</p>
+                    <p className="text-[11px] text-slate-500 leading-snug">{ep.description}</p>
                   </button>
                 )
               })}
@@ -198,22 +198,22 @@ export default function DeveloperApiPage() {
         {/* Right Column: Interactive Sandbox & Response */}
         <div className="lg:col-span-7 space-y-4">
           {/* Endpoint Header & Runner */}
-          <div className="rounded-2xl bg-[#0F172A] border border-[#1E293B] p-5 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1E293B]">
+          <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-1 text-xs font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                <span className="px-2 py-1 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 font-mono">
                   {selectedEndpoint.method}
                 </span>
-                <span className="text-sm font-bold text-white font-mono break-all">
+                <span className="text-sm font-bold text-slate-900 font-mono break-all">
                   {selectedEndpoint.path}
-                  <span className="text-cyan-400">{selectedEndpoint.params}</span>
+                  <span className="text-cyan-600">{selectedEndpoint.params}</span>
                 </span>
               </div>
 
               <button
                 onClick={() => handleTestApi()}
                 disabled={loading}
-                className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/30 transition disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition disabled:opacity-50"
               >
                 {loading ? (
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -227,17 +227,17 @@ export default function DeveloperApiPage() {
             {/* cURL Snippet */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
-                  <Terminal className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-slate-500" />
                   cURL Equivalent
                 </span>
                 <button
                   onClick={handleCopyCurl}
-                  className="flex items-center gap-1 text-[11px] font-medium text-cyan-400 hover:underline"
+                  className="flex items-center gap-1 text-[11px] font-medium text-cyan-600 hover:underline"
                 >
                   {copiedCurl ? (
                     <>
-                      <Check className="w-3 h-3 text-emerald-400" />
+                      <Check className="w-3 h-3 text-emerald-600" />
                       Copied!
                     </>
                   ) : (
@@ -248,7 +248,7 @@ export default function DeveloperApiPage() {
                   )}
                 </button>
               </div>
-              <pre className="p-3 rounded-xl bg-[#080E1A] border border-[#1E293B] text-[11px] font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap">
+              <pre className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-mono text-slate-700 overflow-x-auto whitespace-pre-wrap">
                 {curlCommand}
               </pre>
             </div>
@@ -256,8 +256,8 @@ export default function DeveloperApiPage() {
             {/* Response Console */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-slate-500" />
                   Live Response
                 </span>
                 {statusCode && (
@@ -265,25 +265,25 @@ export default function DeveloperApiPage() {
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
                         statusCode >= 200 && statusCode < 300
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                          : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                          : "bg-rose-50 text-rose-600 border-rose-200"
                       }`}
                     >
                       Status: {statusCode} OK
                     </span>
-                    {latency && <span className="text-[10px] text-slate-400">{latency} ms</span>}
+                    {latency && <span className="text-[10px] text-slate-500">{latency} ms</span>}
                   </div>
                 )}
               </div>
 
-              <div className="rounded-xl bg-[#080E1A] border border-[#1E293B] p-4 min-h-[220px] max-h-[380px] overflow-auto custom-scrollbar font-mono text-xs">
+              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 min-h-[220px] max-h-[380px] overflow-auto custom-scrollbar font-mono text-xs">
                 {loading ? (
-                  <div className="flex items-center justify-center h-40 text-slate-400 gap-2">
+                  <div className="flex items-center justify-center h-40 text-slate-500 gap-2">
                     <RefreshCw className="w-4 h-4 animate-spin text-blue-500" />
                     <span>Executing API request...</span>
                   </div>
                 ) : responseOutput ? (
-                  <pre className="text-emerald-400 whitespace-pre-wrap">
+                  <pre className="text-emerald-600 whitespace-pre-wrap">
                     {JSON.stringify(responseOutput, null, 2)}
                   </pre>
                 ) : (
