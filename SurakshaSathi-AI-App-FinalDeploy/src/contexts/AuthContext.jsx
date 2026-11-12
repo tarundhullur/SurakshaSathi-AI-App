@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { detectLoginPlaceSync, resolveLoginPlaceAsync, formatLoginDate } from "../utils/location.js"
 
 const AuthContext = createContext(null)
 
@@ -87,6 +88,7 @@ export function saveRealUserToStorage(userData) {
     const isSuperAdmin = cleanEmail === "tarundhullur06@gmail.com"
     const isAdmin = isSuperAdmin || cleanEmail.includes("admin") || userData.role === "ADMIN" || userData.role === "Admin" || userData.role === "Super Admin"
 
+    const detectedPlace = userData.loginPlace || detectLoginPlaceSync()
     const profile = {
       id: userData.id || `usr-${Date.now().toString(36)}`,
       name: cleanName,
@@ -96,8 +98,9 @@ export function saveRealUserToStorage(userData) {
       provider: userData.provider ? (userData.provider.charAt(0).toUpperCase() + userData.provider.slice(1)) : "Email",
       avatar: userData.avatar || cleanName.slice(0, 2).toUpperCase() || "US",
       phone: userData.phone || "",
-      joinedOn: userData.joinedOn ? new Date(userData.joinedOn).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-      lastLogin: new Date().toISOString(),
+      loginPlace: detectedPlace,
+      joinedOn: formatLoginDate(userData.joinedOn || new Date().toISOString()),
+      lastLogin: userData.lastLogin || new Date().toISOString(),
       totalChecks: userData.activityCount || 0,
       messagesChecked: 0,
       threatsBlocked: 0,
@@ -122,6 +125,7 @@ export function saveRealUserToStorage(userData) {
         provider: "Google",
         avatar: "TD",
         phone: "+91 98000 11223",
+        loginPlace: "India (IST)",
         joinedOn: "Oct 16, 2026",
         lastLogin: new Date().toISOString(),
         totalChecks: 0,
@@ -139,6 +143,37 @@ export function saveRealUserToStorage(userData) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(profile),
     }).catch(() => {})
+
+    // Enrich with city/region/country asynchronously if not explicitly set
+    if (!userData.loginPlace) {
+      resolveLoginPlaceAsync().then((resolvedPlace) => {
+        if (!resolvedPlace || resolvedPlace === detectedPlace) return
+        try {
+          const currentSaved = localStorage.getItem(REG_USERS_STORAGE_KEY)
+          if (currentSaved) {
+            const parsedList = JSON.parse(currentSaved)
+            const idx = parsedList.findIndex((u) => u.email?.toLowerCase() === cleanEmail)
+            if (idx !== -1) {
+              parsedList[idx] = { ...parsedList[idx], loginPlace: resolvedPlace }
+              localStorage.setItem(REG_USERS_STORAGE_KEY, JSON.stringify(parsedList))
+            }
+          }
+          const activeRaw = localStorage.getItem(USER_STORAGE_KEY)
+          if (activeRaw) {
+            const activeUser = JSON.parse(activeRaw)
+            if (activeUser?.email?.toLowerCase() === cleanEmail) {
+              activeUser.loginPlace = resolvedPlace
+              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(activeUser))
+            }
+          }
+          fetch("/api/admin/users/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...profile, loginPlace: resolvedPlace }),
+          }).catch(() => {})
+        } catch {}
+      })
+    }
   } catch (err) {
     console.warn("Failed to sync real user to storage:", err)
   }
@@ -258,7 +293,9 @@ export function AuthProvider({ children }) {
       provider: "google",
       role: userRole,
       phone: "",
+      loginPlace: detectLoginPlaceSync(),
       joinedOn: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
       activityCount: 0,
     }
 
@@ -289,7 +326,9 @@ export function AuthProvider({ children }) {
       provider: "github",
       role: userRole,
       phone: "",
+      loginPlace: detectLoginPlaceSync(),
       joinedOn: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
       activityCount: 0,
     }
 
@@ -331,6 +370,7 @@ export function AuthProvider({ children }) {
           throw new Error("Incorrect password. Please enter the correct password.")
         }
 
+        const loginPlace = detectLoginPlaceSync()
         const userObj = {
           id: existingAccount.id,
           name: existingAccount.name,
@@ -339,7 +379,9 @@ export function AuthProvider({ children }) {
           provider: "email",
           role: existingAccount.role || "User",
           phone: "",
+          loginPlace,
           joinedOn: existingAccount.createdAt || new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
           activityCount: 0,
         }
 
@@ -367,6 +409,7 @@ export function AuthProvider({ children }) {
       }
       saveStoredUserAccounts(accounts)
 
+      const loginPlace = detectLoginPlaceSync()
       const userObj = {
         id: userId,
         name: cleanName,
@@ -375,7 +418,9 @@ export function AuthProvider({ children }) {
         provider: "email",
         role: userRole,
         phone: "",
+        loginPlace,
         joinedOn: nowIso,
+        lastLogin: nowIso,
         activityCount: 0,
       }
 

@@ -543,9 +543,10 @@ export async function syncUser(userData) {
     status: userData.status || "Active",
     avatar: userData.avatar || cleanName.slice(0, 2).toUpperCase() || "US",
     phone: userData.phone || "",
+    loginPlace: userData.loginPlace || userData.location || "Web / Local",
     provider: userData.provider || "Email",
     createdAt: userData.joinedOn || new Date().toISOString(),
-    lastLogin: new Date().toISOString(),
+    lastLogin: userData.lastLogin || new Date().toISOString(),
     totalChecks: Number(userData.totalChecks || userData.activityCount || 0),
     totalComparisons: Number(userData.totalChecks || userData.activityCount || 0),
   }
@@ -728,7 +729,8 @@ export async function getUsers({ page = 1, limit = 10, search = "", role = "", s
       (u) =>
         u.name.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
-        u.id.toLowerCase().includes(q)
+        u.id.toLowerCase().includes(q) ||
+        (u.loginPlace || "").toLowerCase().includes(q)
     )
   }
 
@@ -796,6 +798,7 @@ export async function createUser(userData, actor = "Admin") {
     status: userData.status || "Active",
     avatar: initials || "US",
     phone: userData.phone || "+91 90000 00000",
+    loginPlace: userData.loginPlace || userData.location || "Web / Local",
     createdAt: new Date().toISOString(),
     lastLogin: new Date().toISOString(),
     totalComparisons: 0,

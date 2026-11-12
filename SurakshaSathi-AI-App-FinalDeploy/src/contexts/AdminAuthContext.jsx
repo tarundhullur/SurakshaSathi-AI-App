@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { saveRealUserToStorage } from "./AuthContext.jsx"
+import { detectLoginPlaceSync } from "../utils/location.js"
 
 const AdminAuthContext = createContext(null)
 
@@ -193,6 +195,12 @@ export function AdminAuthProvider({ children }) {
           localStorage.setItem("surakshasathi_admin_token", data.token)
           localStorage.setItem("surakshasathi_admin_user", JSON.stringify(data.user))
         } catch {}
+        saveRealUserToStorage({
+          ...data.user,
+          provider: "email",
+          loginPlace: detectLoginPlaceSync(),
+          lastLogin: new Date().toISOString(),
+        })
         setToken(data.token)
         setAdminUser(data.user)
         return { success: true, user: data.user }
@@ -222,6 +230,12 @@ export function AdminAuthProvider({ children }) {
         localStorage.setItem("surakshasathi_admin_token", localToken)
         localStorage.setItem("surakshasathi_admin_user", JSON.stringify(localAdminUser))
       } catch {}
+      saveRealUserToStorage({
+        ...localAdminUser,
+        provider: "email",
+        loginPlace: detectLoginPlaceSync(),
+        lastLogin: new Date().toISOString(),
+      })
       setToken(localToken)
       setAdminUser(localAdminUser)
       return { success: true, user: localAdminUser }

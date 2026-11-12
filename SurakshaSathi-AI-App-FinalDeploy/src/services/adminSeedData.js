@@ -10,6 +10,7 @@ export const initialSuperAdminUser = {
   role: "Super Admin",
   provider: "Google",
   phone: "+91 98000 11223",
+  loginPlace: "India (IST)",
   totalComparisons: 0,
   totalChecks: 0,
   messagesChecked: 0,

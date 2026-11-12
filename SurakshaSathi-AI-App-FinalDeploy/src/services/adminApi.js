@@ -5,6 +5,7 @@ import {
   initialComparisonsList,
   initialLogsList,
 } from "./adminSeedData.js"
+import { detectLoginPlaceSync } from "../utils/location.js"
 
 const USERS_STORAGE_KEY = "surakshasathi_registered_users"
 const RIDES_STORAGE_KEY = "surakshasathi_admin_rides"
@@ -46,6 +47,13 @@ export function getCleanRegisteredUsers() {
     if (!hasSuperAdmin && initialFullUsers[0]) {
       users.unshift(initialFullUsers[0])
     }
+
+    const defaultPlace = detectLoginPlaceSync()
+    users = users.map((u) => ({
+      ...u,
+      loginPlace: u.loginPlace || u.location || defaultPlace,
+      lastLogin: u.lastLogin || u.joinedOn || u.createdAt || "",
+    }))
 
     localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
     return users
@@ -242,9 +250,10 @@ export async function fetchUsers({ page = 1, limit = 10, search = "", role = "Al
       const q = search.toLowerCase()
       list = list.filter(
         (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q) ||
-          u.id.toLowerCase().includes(q)
+          u.name?.toLowerCase().includes(q) ||
+          u.email?.toLowerCase().includes(q) ||
+          u.id?.toLowerCase().includes(q) ||
+          u.loginPlace?.toLowerCase().includes(q)
       )
     }
 
@@ -293,7 +302,12 @@ export async function fetchUsers({ page = 1, limit = 10, search = "", role = "Al
       let filtered = Array.from(map.values())
       if (search) {
         const q = search.toLowerCase()
-        filtered = filtered.filter((u) => u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q))
+        filtered = filtered.filter(
+          (u) =>
+            u.name?.toLowerCase().includes(q) ||
+            u.email?.toLowerCase().includes(q) ||
+            u.loginPlace?.toLowerCase().includes(q)
+        )
       }
       if (role && role !== "All") {
         filtered = filtered.filter((u) => u.role?.toLowerCase() === role.toLowerCase())
@@ -358,7 +372,9 @@ export async function createUser(userData) {
         avatar: initials || "US",
         avatarBg: randomColor,
         phone: userData.phone || "+91 98000 00000",
+        loginPlace: userData.loginPlace || detectLoginPlaceSync(),
         joinedOn: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        lastLogin: new Date().toISOString(),
         totalComparisons: 0,
       }
 

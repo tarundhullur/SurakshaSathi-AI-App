@@ -1,6 +1,7 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, MapPin } from "lucide-react"
+import { detectLoginPlaceSync, formatLoginDate } from "../../utils/location.js"
 
 export default function RecentUsersTable({ users = [] }) {
   return (
@@ -23,14 +24,17 @@ export default function RecentUsersTable({ users = [] }) {
           <thead>
             <tr className="border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
               <th className="py-3 px-3">Name</th>
-              <th className="py-3 px-3">Email</th>
-              <th className="py-3 px-3">Joined On</th>
+              <th className="py-3 px-3">Email ID</th>
+              <th className="py-3 px-3">Login Place</th>
+              <th className="py-3 px-3">Date</th>
               <th className="py-3 px-3 text-right">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-xs">
             {users.map((u) => {
               const isActive = u.status === "Active"
+              const loginPlace = u.loginPlace || u.location || detectLoginPlaceSync()
+              const loginDate = formatLoginDate(u.lastLogin || u.joinedOn || u.createdAt || new Date().toISOString())
               return (
                 <tr key={u.id} className="hover:bg-slate-50 transition group">
                   <td className="py-3.5 px-3">
@@ -53,8 +57,14 @@ export default function RecentUsersTable({ users = [] }) {
                   <td className="py-3.5 px-3 text-slate-600 font-mono text-[11px]">
                     {u.email}
                   </td>
+                  <td className="py-3.5 px-3 text-slate-700">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-700">
+                      <MapPin className="w-3 h-3 text-blue-600 shrink-0" />
+                      <span>{loginPlace}</span>
+                    </span>
+                  </td>
                   <td className="py-3.5 px-3 text-slate-500">
-                    {u.joinedOn || "May 1, 2025"}
+                    {loginDate}
                   </td>
                   <td className="py-3.5 px-3 text-right">
                     <span
