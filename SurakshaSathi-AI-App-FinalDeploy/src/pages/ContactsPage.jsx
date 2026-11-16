@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Pencil, Phone, Plus, Trash2, Users, AlertCircle, CheckCircle2, ShieldAlert } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Pencil, Phone, Plus, Trash2, Users, AlertCircle, CheckCircle2, ShieldAlert, X, AlertTriangle } from "lucide-react"
 import PageHeader from "../components/PageHeader.jsx"
 import {
   getContacts,
@@ -30,6 +30,26 @@ export default function ContactsPage() {
   const [error, setError] = useState("")
   const [nameError, setNameError] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [contactToDelete, setContactToDelete] = useState(null)
+  const [confirmCleanInvalid, setConfirmCleanInvalid] = useState(false)
+  const [feedbackMessage, setFeedbackMessage] = useState(null)
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape") {
+        if (contactToDelete) setContactToDelete(null)
+        if (confirmCleanInvalid) setConfirmCleanInvalid(false)
+      }
+    }
+    if (contactToDelete || confirmCleanInvalid) {
+      document.body.style.overflow = "hidden"
+      window.addEventListener("keydown", handleKeyDown)
+    }
+    return () => {
+      document.body.style.overflow = "unset"
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [contactToDelete, confirmCleanInvalid])
 
   const isInvalidStart = form.phone.length > 0 && !/^[6-9]/.test(form.phone)
   const isCompleteValid = form.phone.length === 10 && /^[6-9]\d{9}$/.test(form.phone)
@@ -143,9 +163,10 @@ export default function ContactsPage() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  function deleteContact(id) {
-    if (!window.confirm("Delete this emergency contact from this device?"))
-      return
+  function confirmDeleteContact() {
+    if (!contactToDelete) return
+    const id = contactToDelete.id
+    const deletedName = contactToDelete.name
     const next = contacts.filter((contact) => contact.id !== id)
     setContacts(next)
     try {
@@ -155,11 +176,23 @@ export default function ContactsPage() {
         localStorage.setItem("suraksha-emergency-contacts", JSON.stringify(next))
       }
     }
+    if (editingId === id) {
+      setEditingId(null)
+      setForm(emptyForm)
+      setError("")
+      setNameError("")
+    }
+    setContactToDelete(null)
+    setFeedbackMessage({
+      type: "success",
+      text: `Deleted contact "${deletedName}".`,
+    })
+    setTimeout(() => {
+      setFeedbackMessage(null)
+    }, 4000)
   }
 
-  function cleanAllInvalid() {
-    if (!window.confirm(`Remove ${invalidCount} invalid contact(s) that do not meet the 10-digit Indian number rule?`))
-      return
+  function confirmCleanAllInvalid() {
     const validOnly = deduplicateContacts(contacts.filter((c) => isValidIndianPhoneNumber(c.phone)))
     setContacts(validOnly)
     try {
@@ -169,6 +202,14 @@ export default function ContactsPage() {
         localStorage.setItem("suraksha-emergency-contacts", JSON.stringify(validOnly))
       }
     }
+    setConfirmCleanInvalid(false)
+    setFeedbackMessage({
+      type: "success",
+      text: `Removed ${invalidCount} invalid contact(s).`,
+    })
+    setTimeout(() => {
+      setFeedbackMessage(null)
+    }, 4000)
   }
 
   return (
@@ -178,6 +219,21 @@ export default function ContactsPage() {
         title="Emergency contacts"
         description="Save people you trust for quick calls and SOS messages. Only verified 10-digit Indian numbers (starting with 6, 7, 8, or 9) are accepted."
       />
+
+      {feedbackMessage && (
+        <div className="mb-6 flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3.5 text-sm font-semibold text-emerald-900 shadow-sm transition">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+            <span>{feedbackMessage.text}</span>
+          </div>
+          <button
+            onClick={() => setFeedbackMessage(null)}
+            className="text-xs font-bold text-emerald-700 hover:text-emerald-900 underline transition"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <div className="grid items-start gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <form
           onSubmit={handleSubmit}
@@ -369,7 +425,7 @@ export default function ContactsPage() {
               </div>
               <button
                 type="button"
-                onClick={cleanAllInvalid}
+                onClick={() => setConfirmCleanInvalid(true)}
                 className="shrink-0 rounded-xl bg-rose-200 hover:bg-rose-300 px-3 py-1.5 font-bold text-rose-900 transition"
               >
                 Remove Invalid
@@ -448,7 +504,7 @@ export default function ContactsPage() {
                         <Pencil size={18} />
                       </button>
                       <button
-                        onClick={() => deleteContact(contact.id)}
+                        onClick={() => setContactToDelete(contact)}
                         className="rounded-lg p-2.5 text-red-600 hover:bg-red-50 transition"
                         aria-label={`Delete ${contact.name}`}
                         title="Delete contact"
@@ -473,6 +529,146 @@ export default function ContactsPage() {
           )}
         </section>
       </div>
+
+      {/* CONFIRMATION DIALOG: ARE YOU SURE? (OPTIONS: YES AND NO) */}
+      {contactToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setContactToDelete(null)}
+            aria-hidden="true"
+          />
+
+          {/* Modal Content */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-delete-title"
+            className="relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 animate-scale-up"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-50 border border-rose-200 text-rose-600">
+                  <AlertTriangle className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 id="confirm-delete-title" className="text-lg font-bold text-slate-900">
+                    Are you sure?
+                  </h3>
+                  <p className="text-xs text-slate-500">Delete emergency contact</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setContactToDelete(null)}
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+                aria-label="Close dialog"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3.5">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800 font-bold text-sm">
+                  {contactToDelete.name ? contactToDelete.name.trim().charAt(0).toUpperCase() : "C"}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-slate-900 truncate">{contactToDelete.name}</p>
+                  <p className="text-xs text-slate-500 font-mono mt-0.5">
+                    {contactToDelete.phone?.length === 10
+                      ? `+91 ${contactToDelete.phone.slice(0, 5)} ${contactToDelete.phone.slice(5)}`
+                      : contactToDelete.phone}
+                    {contactToDelete.relationship ? ` · ${contactToDelete.relationship}` : ""}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+              Are you sure you want to delete this contact? This person will be removed from your emergency trusted circle and will no longer receive one-tap emergency calls or SOS dispatch alerts.
+            </p>
+
+            <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setContactToDelete(null)}
+                className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition"
+              >
+                No
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteContact}
+                className="rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-600/30 hover:bg-rose-700 transition"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRMATION DIALOG: CLEAN ALL INVALID (OPTIONS: YES AND NO) */}
+      {confirmCleanInvalid && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setConfirmCleanInvalid(false)}
+            aria-hidden="true"
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-clean-title"
+            className="relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 animate-scale-up"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-50 border border-rose-200 text-rose-600">
+                  <ShieldAlert className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 id="confirm-clean-title" className="text-lg font-bold text-slate-900">
+                    Are you sure?
+                  </h3>
+                  <p className="text-xs text-slate-500">Remove invalid contacts</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setConfirmCleanInvalid(false)}
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+                aria-label="Close dialog"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+              Are you sure you want to remove all {invalidCount} contact(s) that do not meet the 10-digit Indian phone number rule?
+            </p>
+
+            <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setConfirmCleanInvalid(false)}
+                className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-100 transition"
+              >
+                No
+              </button>
+              <button
+                type="button"
+                onClick={confirmCleanAllInvalid}
+                className="rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-600/30 hover:bg-rose-700 transition"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
