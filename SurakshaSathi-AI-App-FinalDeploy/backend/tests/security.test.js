@@ -255,3 +255,46 @@ test("Security Test I: RFC 6238 TOTP Two-Factor Authentication", () => {
   assert.equal(verifyTotpCode(secret, "000000" === code ? "111111" : "000000"), false, "Wrong code must fail")
   assert.equal(verifyTotpCode(secret, "invalid"), false, "Non-numeric code must fail")
 })
+
+test("Security Test J: Strict 10-digit Indian phone number validation and backend rejection", async () => {
+  const { isValidIndianPhoneNumber, validateIndianPhoneNumber } = await import("../utils/phoneValidator.js")
+
+  // 1. Rejected cases
+  assert.equal(isValidIndianPhoneNumber("123456789"), false, "9 digits must be rejected")
+  assert.equal(isValidIndianPhoneNumber("1234567890"), false, "Number starting with 1 must be rejected")
+  assert.equal(isValidIndianPhoneNumber("2345678901"), false, "Number starting with 2 must be rejected")
+  assert.equal(isValidIndianPhoneNumber("5555555555"), false, "Number starting with 5 must be rejected")
+  assert.equal(isValidIndianPhoneNumber("098765432"), false, "Short number with 0 must be rejected")
+  assert.equal(isValidIndianPhoneNumber("abcdefghij"), false, "Non-numeric string must be rejected")
+  assert.equal(isValidIndianPhoneNumber(""), false, "Empty string must be rejected")
+
+  // 2. Accepted cases (starting with 6, 7, 8, 9 and exactly 10 digits)
+  assert.equal(isValidIndianPhoneNumber("9876543210"), true, "Valid 10-digit starting with 9 must pass")
+  assert.equal(isValidIndianPhoneNumber("8123456789"), true, "Valid 10-digit starting with 8 must pass")
+  assert.equal(isValidIndianPhoneNumber("7012345678"), true, "Valid 10-digit starting with 7 must pass")
+  assert.equal(isValidIndianPhoneNumber("6301234567"), true, "Valid 10-digit starting with 6 must pass")
+  assert.equal(isValidIndianPhoneNumber("+91 9876543210"), true, "Formatted +91 must normalize and pass")
+  assert.equal(isValidIndianPhoneNumber("09876543210"), true, "11-digit starting with 0 trunk must normalize and pass")
+
+  // 3. Structured error responses
+  const shortRes = validateIndianPhoneNumber("123456789")
+  assert.equal(shortRes.valid, false)
+  assert.match(shortRes.error, /Number must begin with 6, 7, 8, or 9/)
+
+  const startRes = validateIndianPhoneNumber("1234567890")
+  assert.equal(startRes.valid, false)
+  assert.match(startRes.error, /Number must begin with 6, 7, 8, or 9/)
+
+  // 4. Backend adminService.createUser rejection
+  await assert.rejects(
+    async () => {
+      await adminService.createUser({
+        name: "Invalid Phone User",
+        email: `invalid-phone-${Date.now()}@test.org`,
+        phone: "123456789", // 9 digits, starts with 1
+      })
+    },
+    /Invalid Indian mobile number/,
+    "adminService.createUser must reject invalid Indian phone numbers"
+  )
+})

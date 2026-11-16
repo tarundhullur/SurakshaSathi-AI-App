@@ -233,3 +233,20 @@ export async function clearHistory() {
   }
   return { message: "Scan history cleared." }
 }
+
+export async function validateContactPhone(phone, name = "") {
+  try {
+    const res = await fetch("/api/contacts/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, name }),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) {
+      throw new Error(data.message || "Invalid Indian phone number.")
+    }
+    return data
+  } catch (err) {
+    throw err
+  }
+}

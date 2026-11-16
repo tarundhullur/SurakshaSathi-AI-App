@@ -94,3 +94,4 @@ export function formatLoginDateTime(value) {
     minute: "2-digit",
   })
 }
+

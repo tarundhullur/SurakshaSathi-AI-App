@@ -1,6 +1,7 @@
 import express from "express"
 import { analyzeMessage } from "../services/messageAnalyzer.js"
 import { analyzeUrl } from "../services/urlAnalyzer.js"
+import { validateIndianPhoneNumber } from "../utils/phoneValidator.js"
 import ScanHistory from "../models/ScanHistory.js"
 
 const router = express.Router()
@@ -40,6 +41,49 @@ router.post("/analyze/url", async (request, response) => {
   } catch (error) {
     response.status(400).json({ message: error.message })
   }
+})
+
+// Strict 10-digit Indian phone number validation endpoint
+router.post("/contacts/validate", (request, response) => {
+  const { phone } = request.body || {}
+  const result = validateIndianPhoneNumber(phone)
+  if (!result.valid) {
+    return response.status(400).json({
+      valid: false,
+      message: result.error,
+    })
+  }
+  response.json({
+    valid: true,
+    phone: result.phone,
+    formatted: `+91 ${result.phone.slice(0, 5)} ${result.phone.slice(5)}`,
+  })
+})
+
+// Emergency contact creation/verification endpoint
+router.post("/contacts", (request, response) => {
+  const { name, phone, relationship } = request.body || {}
+  if (!name || typeof name !== "string" || name.trim().length < 2) {
+    return response.status(400).json({
+      message: "Contact name is required and must be at least 2 characters.",
+    })
+  }
+  const result = validateIndianPhoneNumber(phone)
+  if (!result.valid) {
+    return response.status(400).json({
+      message: result.error,
+    })
+  }
+  response.status(201).json({
+    message: "Emergency contact validated successfully.",
+    contact: {
+      id: `cnt-${Date.now().toString(36)}`,
+      name: name.trim(),
+      phone: result.phone,
+      relationship: (relationship || "").trim(),
+      createdAt: new Date().toISOString(),
+    },
+  })
 })
 
 router.get("/history", async (request, response) => {

@@ -24,6 +24,33 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   const urlPath = req.url.split("?")[0];
+
+  // Proxy /api requests to backend express server
+  if (urlPath.startsWith("/api")) {
+    const proxyReq = http.request(
+      {
+        hostname: "127.0.0.1",
+        port: process.env.BACKEND_PORT || 3001,
+        path: req.url,
+        method: req.method,
+        headers: {
+          ...req.headers,
+          host: "127.0.0.1:3001",
+        },
+      },
+      (proxyRes) => {
+        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+        proxyRes.pipe(res, { end: true });
+      }
+    );
+    proxyReq.on("error", () => {
+      res.writeHead(502, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "Backend API gateway service unavailable" }));
+    });
+    req.pipe(proxyReq, { end: true });
+    return;
+  }
+
   let filePath = path.join(DIST_DIR, urlPath);
 
   // If path doesn't have an extension and is not an existing file, serve index.html (SPA routing)

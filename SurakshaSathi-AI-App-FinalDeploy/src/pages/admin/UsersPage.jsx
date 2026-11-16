@@ -50,6 +50,10 @@ import {
   formatLoginDate,
   formatLoginDateTime,
 } from "../../utils/location.js"
+import {
+  validateIndianPhoneNumber,
+  extractIndianPhoneDigits,
+} from "../../utils/contacts.js"
 
 export default function UsersPage() {
   const { hasPermission, adminUser } = useAdminAuth()
@@ -251,6 +255,14 @@ export default function UsersPage() {
       return
     }
 
+    if (formData.phone && String(formData.phone).trim()) {
+      const phoneRes = validateIndianPhoneNumber(formData.phone)
+      if (!phoneRes.valid) {
+        addToast(phoneRes.error, "error")
+        return
+      }
+    }
+
     setActionLoading(true)
     try {
       await createUser(formData)
@@ -269,6 +281,14 @@ export default function UsersPage() {
   const handleEdit = async (e) => {
     e.preventDefault()
     if (!selectedUser) return
+
+    if (formData.phone && String(formData.phone).trim()) {
+      const phoneRes = validateIndianPhoneNumber(formData.phone)
+      if (!phoneRes.valid) {
+        addToast(phoneRes.error, "error")
+        return
+      }
+    }
 
     setActionLoading(true)
     try {
@@ -889,13 +909,17 @@ export default function UsersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Phone Number <span className="text-slate-400 font-normal">(10-digit Indian mobile starting with 6-9)</span>
+            </label>
             <input
-              type="text"
+              type="tel"
+              inputMode="numeric"
+              maxLength={10}
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="+91 98765 00000"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
+              onChange={(e) => setFormData({ ...formData, phone: extractIndianPhoneDigits(e.target.value) })}
+              placeholder="e.g. 9876543210"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400 font-mono"
             />
           </div>
 
@@ -981,12 +1005,17 @@ export default function UsersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Phone Number <span className="text-slate-400 font-normal">(10-digit Indian mobile starting with 6-9)</span>
+            </label>
             <input
-              type="text"
+              type="tel"
+              inputMode="numeric"
+              maxLength={10}
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
+              onChange={(e) => setFormData({ ...formData, phone: extractIndianPhoneDigits(e.target.value) })}
+              placeholder="e.g. 9876543210"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400 font-mono"
             />
           </div>
 

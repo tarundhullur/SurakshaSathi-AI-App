@@ -6,6 +6,7 @@ import {
   initialLogsList,
 } from "./adminSeedData.js"
 import { detectLoginPlaceSync } from "../utils/location.js"
+import { validateIndianPhoneNumber } from "../utils/contacts.js"
 
 const USERS_STORAGE_KEY = "surakshasathi_registered_users"
 const RIDES_STORAGE_KEY = "surakshasathi_admin_rides"
@@ -348,6 +349,11 @@ export async function fetchUserById(id) {
 }
 
 export async function createUser(userData) {
+  if (userData.phone && String(userData.phone).trim()) {
+    const phoneRes = validateIndianPhoneNumber(userData.phone)
+    if (!phoneRes.valid) throw new Error(phoneRes.error)
+  }
+
   return fetchWithFallback(
     "/api/admin/users",
     { method: "POST", body: JSON.stringify(userData) },
@@ -392,6 +398,11 @@ export async function createUser(userData) {
 }
 
 export async function updateUser(id, updates) {
+  if (updates.phone !== undefined && updates.phone !== null && String(updates.phone).trim()) {
+    const phoneRes = validateIndianPhoneNumber(updates.phone)
+    if (!phoneRes.valid) throw new Error(phoneRes.error)
+  }
+
   return fetchWithFallback(
     `/api/admin/users/${id}`,
     { method: "PATCH", body: JSON.stringify(updates) },

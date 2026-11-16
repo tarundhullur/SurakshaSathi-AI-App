@@ -12,6 +12,7 @@ import {
   verifyTotpCode,
 } from "./authSecurity.js"
 import { loadAuthData, saveAuthData } from "./adminAuthStore.js"
+import { validateIndianPhoneNumber } from "../utils/phoneValidator.js"
 
 // In-memory fallback dataset mirroring the reference dashboard specifications
 const initialUsers = [
@@ -776,6 +777,13 @@ export async function createUser(userData, actor = "Admin") {
     throw new Error("Name and Email are required.")
   }
 
+  if (userData.phone && String(userData.phone).trim()) {
+    const phoneRes = validateIndianPhoneNumber(userData.phone)
+    if (!phoneRes.valid) {
+      throw new Error(phoneRes.error)
+    }
+  }
+
   const existing = memoryStore.users.find(
     (u) => u.email.toLowerCase() === userData.email.toLowerCase()
   )
@@ -819,6 +827,13 @@ export async function createUser(userData, actor = "Admin") {
 export async function updateUser(id, updates, actor = "Admin") {
   const index = memoryStore.users.findIndex((u) => u.id === id)
   if (index === -1) throw new Error("User not found.")
+
+  if (updates.phone !== undefined && updates.phone !== null && String(updates.phone).trim()) {
+    const phoneRes = validateIndianPhoneNumber(updates.phone)
+    if (!phoneRes.valid) {
+      throw new Error(phoneRes.error)
+    }
+  }
 
   const current = memoryStore.users[index]
   const updated = { ...current, ...updates }
@@ -1711,6 +1726,13 @@ export async function acceptInvitation({ token, name, password, phone = "" }) {
 
   if (!password || password.length < 8) {
     throw new Error("Password must be at least 8 characters long.")
+  }
+
+  if (phone && String(phone).trim()) {
+    const phoneRes = validateIndianPhoneNumber(phone)
+    if (!phoneRes.valid) {
+      throw new Error(phoneRes.error)
+    }
   }
 
   const passwordHash = hashPassword(password)
