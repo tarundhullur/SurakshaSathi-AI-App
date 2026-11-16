@@ -131,4 +131,15 @@ router.delete("/history", async (request, response) => {
   response.json({ message: "Scan history cleared." })
 })
 
+router.delete("/history/:id", async (request, response) => {
+  if (!global.mongoConnected)
+    return response.status(503).json({ message: "Database is not connected." })
+  try {
+    await ScanHistory.findByIdAndDelete(request.params.id)
+    response.json({ message: "Scan check deleted." })
+  } catch {
+    response.status(500).json({ message: "Could not delete scan." })
+  }
+})
+
 export default router
