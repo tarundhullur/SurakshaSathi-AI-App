@@ -118,3 +118,28 @@ test("official institutions and preset low/medium examples keep expected calibra
     "Medium Risk",
   )
 })
+
+test("piracy streaming clone, illegal betting, and task scam URLs are accurately classified as High Risk", () => {
+  const movierulz = analyzeUrl("https://www.5movierulz.dentist/")
+  assert.equal(movierulz.category, "High Risk")
+  assert.equal(movierulz.score, 100)
+  assert.ok(movierulz.indicators.some((i) => i.id === "piracy-clone-network"))
+  assert.ok(movierulz.indicators.some((i) => i.id === "rotational-mirror-clone"))
+  assert.ok(movierulz.indicators.some((i) => i.id === "high-risk-tld"))
+
+  const betting = analyzeUrl("https://1xbet-online-betting.click/")
+  assert.equal(betting.category, "High Risk")
+  assert.ok(betting.indicators.some((i) => i.id === "gambling-betting-portal"))
+
+  const recharge = analyzeUrl("https://freerecharge-jio-offer.xyz/")
+  assert.equal(recharge.category, "High Risk")
+  assert.ok(recharge.indicators.some((i) => i.id === "reward-financial-scam"))
+
+  const jobScam = analyzeUrl("https://parttime-job-salary.click/")
+  assert.equal(jobScam.category, "High Risk")
+  assert.ok(jobScam.indicators.some((i) => i.id === "job-task-scam"))
+
+  const ngrokPhish = analyzeUrl("https://sbi-login.ngrok-free.app/")
+  assert.equal(ngrokPhish.category, "High Risk")
+  assert.ok(ngrokPhish.indicators.some((i) => i.id === "free-hosting-phish"))
+})

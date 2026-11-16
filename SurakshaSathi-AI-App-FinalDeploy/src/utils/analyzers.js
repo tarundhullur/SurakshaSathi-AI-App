@@ -34,6 +34,7 @@ const HIGH_RISK_TLDS = new Set([
   "xyz",
   "click",
   "loan",
+  "loans",
   "work",
   "icu",
   "cfd",
@@ -45,6 +46,56 @@ const HIGH_RISK_TLDS = new Set([
   "buzz",
   "monster",
   "support",
+  "cam",
+  "fit",
+  "kim",
+  "men",
+  "gdn",
+  "mom",
+  "casa",
+  "uno",
+  "bid",
+  "win",
+  "racing",
+  "cricket",
+  "party",
+  "trade",
+  "date",
+  "faith",
+  "accountant",
+  "review",
+  "pw",
+  "rip",
+  "lol",
+  "pub",
+  "bar",
+  "space",
+  "fun",
+  "website",
+  "host",
+  "press",
+  "cloud",
+  "dentist",
+  "doctor",
+  "diet",
+  "cleaning",
+  "repair",
+  "stream",
+  "download",
+  "audio",
+  "video",
+  "pics",
+  "su",
+  "cc",
+  "ws",
+  "to",
+  "link",
+  "surf",
+  "online",
+  "site",
+  "live",
+  "pro",
+  "run",
 ])
 
 const COMPOUND_PUBLIC_SUFFIXES = new Set([
@@ -207,6 +258,77 @@ const TRUSTED_BRANDS = [
     keywords: ["netflix"],
     officialDomains: ["netflix.com"],
   },
+  {
+    name: "Disney+ Hotstar",
+    keywords: ["hotstar"],
+    officialDomains: ["hotstar.com"],
+  },
+  {
+    name: "JioCinema / Jio",
+    keywords: ["jiocinema"],
+    shortTokens: ["jio"],
+    officialDomains: ["jiocinema.com", "jio.com"],
+  },
+  {
+    name: "SonyLIV",
+    keywords: ["sonyliv"],
+    officialDomains: ["sonyliv.com"],
+  },
+  {
+    name: "Zee5",
+    keywords: ["zee5"],
+    officialDomains: ["zee5.com"],
+  },
+  {
+    name: "Prime Video",
+    keywords: ["primevideo"],
+    officialDomains: ["primevideo.com", "amazon.com", "amazon.in"],
+  },
+  {
+    name: "Meesho",
+    keywords: ["meesho"],
+    officialDomains: ["meesho.com"],
+  },
+  {
+    name: "Myntra",
+    keywords: ["myntra"],
+    officialDomains: ["myntra.com"],
+  },
+  {
+    name: "Swiggy",
+    keywords: ["swiggy"],
+    officialDomains: ["swiggy.com"],
+  },
+  {
+    name: "Zomato",
+    keywords: ["zomato"],
+    officialDomains: ["zomato.com"],
+  },
+  {
+    name: "Airtel",
+    keywords: ["airtel"],
+    officialDomains: ["airtel.in", "airtel.com"],
+  },
+  {
+    name: "Telegram",
+    keywords: ["telegram"],
+    officialDomains: ["telegram.org", "t.me"],
+  },
+  {
+    name: "DigiLocker",
+    keywords: ["digilocker"],
+    officialDomains: ["digilocker.gov.in"],
+  },
+  {
+    name: "Parivahan / eChallan",
+    keywords: ["parivahan", "echallan"],
+    officialDomains: ["parivahan.gov.in"],
+  },
+  {
+    name: "India Post",
+    keywords: ["indiapost"],
+    officialDomains: ["indiapost.gov.in"],
+  },
 ]
 
 const OFFICIAL_PUBLIC_TLDS = [
@@ -227,7 +349,91 @@ const RESERVED_EXAMPLE_DOMAINS = ["example.com", "example.org", "example.net"]
 const FUZZY_SKIP_KEYWORDS = new Set(["apple", "office", "live", "kotak", "pnb"])
 
 const DECEPTIVE_DOMAIN_REGEX =
-  /(fake|scam|phish|fraud|spoof|hoax|dummy|malware|trojan|ransom|spyware|keygen|warez|stealer|skimmer)/i
+  /(fake|scam|phish|fraud|spoof|hoax|dummy|malware|trojan|ransom|spyware|keygen|warez|stealer|skimmer|adware|modapk|hacked|cracked|phishing)/i
+
+// Piracy, Torrent, and Illicit Movie Streaming Mirror Networks
+const PIRACY_CLONE_REGEX =
+  /(movierulz|tamilrockers|ibomma|123movies|fmovies|putlocker|torrent|piratebay|filmywap|bolly4u|todaypk|kuttymovies|isaimini|pagalworld|djpunjab|crazy4tv|yts|rarbg|eztv|soap2day|solarmovie|flixtor|cineb|lookmovie|streamm4u|gomovies|vumoo|primewire|filmyzilla|moviesda|mp4moviez|vegamovies|katmoviehd|bollyflix|moviezverse|prmovies|allmovieshub|worldfree4u|skymovieshd|tamilgun|tamilyogi|jiorockers|cinemavilla|jalshamoviez|desiremovies|hubflix|hdhub4u|downloadhub|o2cinemas|extramovies|filmyhit|filmyfly|yomovies|free-movies|watchonlinefree|freemovies|hdmovies|7starhd|9xmovies|1filmy4wap|filmy4wap|hdmovie2|cinevez|bollyshare|moviesflix|topmovies|movierush|uwatchfree|crazyhd|dvdplay|movieswap)/i
+
+function detectPiracyCloneNetwork(host, pathname) {
+  const fullText = `${host} ${pathname || ""}`.toLowerCase()
+  const match = fullText.match(PIRACY_CLONE_REGEX)
+  return match ? match[1] : null
+}
+
+// Rotational Mirror / Evasion Patterns
+function detectRotationalEvasion(host) {
+  const primary = getRegistrableBodyLabel(host)
+  if (!primary) return null
+  const numPrefixMatch = primary.match(/^(\d{1,4})([a-z]{3,})/i)
+  if (numPrefixMatch) {
+    const [, digits, word] = numPrefixMatch
+    return `The domain uses numeric evasion prefix "${digits}" before "${word}", a common evasive pattern deployed by clone and mirror networks to bypass court and ISP domain blocks.`
+  }
+  const numSuffixMatch = primary.match(/^([a-z]{3,})(\d{1,4})$/i)
+  if (numSuffixMatch) {
+    const [, word, digits] = numSuffixMatch
+    if (!["365", "24", "7", "360", "100", "2024", "2025", "2026"].includes(digits)) {
+      return `The domain appends rotating counter digits "${digits}" to "${word}", characteristic of mirror networks evading censorship or takedowns.`
+    }
+  }
+  if (/(proxy|unblock|mirror|clone|bypass|alternative|gateway|backup)[-_.]/i.test(host)) {
+    return "The domain contains proxy or unblock evasion keywords typical of unauthorized mirror networks."
+  }
+  return null
+}
+
+// Unregulated Gambling, Betting, and Satta Matka
+const GAMBLING_BETTING_REGEX =
+  /(1xbet|betway|parimatch|bet365|stake\.com|dafabet|satta|matka|kalyanmatka|aviator|colorprediction|winzo-fake|rummycircle|teenpatti|casino|jackpot|roulette|bookie|bet9ja|melbet|mostbet|linebet|baji999|jeetwin|cricketbet|iplbet|lottery-sambad|dhankesari|gambling|betting)/i
+
+function detectGamblingBetting(host, pathname) {
+  const fullText = `${host} ${pathname || ""}`.toLowerCase()
+  const match = fullText.match(GAMBLING_BETTING_REGEX)
+  return match ? match[1] : null
+}
+
+// Deceptive Reward, Airdrop, Free Recharge & Giveaway Scams
+const REWARD_SCAM_REGEX =
+  /(airdrop|faucet|freecrypto|freerecharge|free-recharge|freegift|free-gift|freeloot|giveaway|claim-reward|claim-bonus|claim-prize|spin-wheel|spinandwin|win-iphone|win-cash|doubler|cryptoinvest|mining-hash|usdt-earn|earn-money-daily|free-diamonds|free-fire-diamonds|pubg-uc-free|free-robux)/i
+
+function detectRewardScam(host, pathname) {
+  const fullText = `${host} ${pathname || ""}`.toLowerCase()
+  const match = fullText.match(REWARD_SCAM_REGEX)
+  return match ? match[1] : null
+}
+
+// Job, Daily Earning, and Task-Based Scam Keywords
+const JOB_SCAM_REGEX =
+  /(parttime-job|workfromhome|task-earning|daily-salary|youtube-like-job|telegram-task|online-earning|daily-income|easyjob|salary-task|task-commission|order-grabbing|typing-job-earn)/i
+
+function detectJobScam(host, pathname) {
+  const fullText = `${host} ${pathname || ""}`.toLowerCase()
+  const match = fullText.match(JOB_SCAM_REGEX)
+  return match ? match[1] : null
+}
+
+// Free Subdomain / Dynamic Hosting Exploited for Phishing
+const FREE_DYNAMIC_HOSTS = [
+  "ngrok.io", "ngrok-free.app", "loca.lt", "serveo.net", "duckdns.org",
+  "pages.dev", "vercel.app", "netlify.app", "firebaseapp.com",
+  "000webhostapp.com", "glitch.me", "herokuapp.com", "repl.co", "github.io"
+]
+
+function detectFreeHostingAbuse(host, pathname) {
+  const lowerHost = host.toLowerCase()
+  const matchedHost = FREE_DYNAMIC_HOSTS.find((h) => lowerHost.endsWith(`.${h}`) || lowerHost === h)
+  if (!matchedHost) return null
+
+  const prefix = lowerHost.replace(`.${matchedHost}`, "")
+  const combined = `${prefix} ${pathname || ""}`.toLowerCase()
+  const sensitivePattern = /(login|signin|verify|account|otp|bank|kyc|support|secure|pay|update|claim|prize|gift|sbi|hdfc|icici|axis|google|amazon|paypal|netflix|paytm|phonepe|aadhaar|pan)/i
+
+  if (sensitivePattern.test(combined)) {
+    return `The URL hosts sensitive action or branding terms ("${prefix}") on a free public cloud/tunnel domain (${matchedHost}), a common pattern in temporary phishing deployments.`
+  }
+  return null
+}
 
 const INSTITUTIONAL_HOST_TOKEN_REGEX =
   /\b(bank|netbanking|banking|govt|gov|kyc|aadhar|aadhaar|upi|challan|parivahan|epfo|incometax|passport|rbi|sebi|wallet|lottery|prize|reward|cashback|refund|verify|verification|login|signin|password|otp|cvv|claim|helpdesk|support|secure|official)\b/i
@@ -631,6 +837,66 @@ export function analyzeUrl(input) {
     )
   }
 
+  const piracyHit = !reservedExample && !trustedOfficial ? detectPiracyCloneNetwork(host, parsed.pathname) : null
+  if (piracyHit) {
+    add(
+      "piracy-clone-network",
+      "Illicit streaming / piracy mirror network",
+      `The domain or path matches known unauthorized movie streaming, torrent, or piracy clone networks ("${piracyHit}"). These unverified platforms commonly distribute invasive adware, forced redirects, and malicious downloaders.`,
+      65,
+    )
+  }
+
+  const evasionReason = !isIpHost && !reservedExample && !trustedOfficial ? detectRotationalEvasion(host) : null
+  if (evasionReason) {
+    add(
+      "rotational-mirror-clone",
+      "Rotational mirror / evasive clone prefix",
+      evasionReason,
+      30,
+    )
+  }
+
+  const gamblingHit = !reservedExample && !trustedOfficial ? detectGamblingBetting(host, parsed.pathname) : null
+  if (gamblingHit) {
+    add(
+      "gambling-betting-portal",
+      "Unregulated betting / gambling portal",
+      `The URL contains betting, gambling, or satta patterns ("${gamblingHit}"). Unregulated betting schemes carry severe risks of financial loss, unauthorized payment deductions, and identity theft.`,
+      60,
+    )
+  }
+
+  const rewardHit = !reservedExample && !trustedOfficial ? detectRewardScam(host, parsed.pathname) : null
+  if (rewardHit) {
+    add(
+      "reward-financial-scam",
+      "Deceptive reward or financial scheme wording",
+      `The link advertises free mobile recharges, crypto airdrops, cash prizes, or giveaways ("${rewardHit}"). These patterns are hallmark indicators of advance-fee and credential-phishing scams.`,
+      60,
+    )
+  }
+
+  const jobHit = !reservedExample && !trustedOfficial ? detectJobScam(host, parsed.pathname) : null
+  if (jobHit) {
+    add(
+      "job-task-scam",
+      "Task-based job scam wording",
+      `The domain features part-time task, YouTube like-job, or daily earning terminology ("${jobHit}"), which are typical of prepaid task scams.`,
+      60,
+    )
+  }
+
+  const freeHostPhish = !reservedExample && !trustedOfficial ? detectFreeHostingAbuse(host, parsed.pathname) : null
+  if (freeHostPhish) {
+    add(
+      "free-hosting-phish",
+      "Sensitive or brand name on free temporary hosting",
+      freeHostPhish,
+      55,
+    )
+  }
+
   const domainWithoutTld = host.split(".").slice(0, -1).join(".")
   const domainTokens = domainWithoutTld
     .split(".")
@@ -781,23 +1047,31 @@ export function analyzeUrl(input) {
 
   const category = categoryFor(score)
 
-  const actions =
-    category === "High Risk"
-      ? [
-          "Do not sign in or enter credentials on this page.",
-          "Do not download files or complete payments through this link.",
-          "Type the official organization address manually in your browser.",
-        ]
-      : category === "Medium Risk"
-        ? [
-          "Verify the domain name carefully before interacting.",
-          "Look for HTTPS and check that the company name matches the official domain.",
-          "If received in an unprompted message, confirm through the official app or helpline.",
-        ]
-        : [
-          "Always ensure sensitive transactions occur over HTTPS.",
-          "A low score reflects clean URL structure, but still confirm the sender and domain before entering passwords or OTPs.",
-        ]
+  const actions = []
+  if (piracyHit) {
+    actions.push("Do not open, stream, or download content from this link.")
+    actions.push("Piracy and unauthorized movie clone portals often inject intrusive malvertising, crypto-miners, or spyware into your browser.")
+    actions.push("Use legitimate, licensed streaming platforms (e.g. Netflix, Prime Video, Hotstar, JioCinema, SonyLIV).")
+  } else if (gamblingHit) {
+    actions.push("Do not transfer funds, deposit money, or connect UPI/cards to this portal.")
+    actions.push("Unregulated betting platforms are illegal in many jurisdictions and frequently freeze deposits.")
+    actions.push("Never share OTPs or banking credentials with betting operators or agents.")
+  } else if (rewardHit || jobHit) {
+    actions.push("Never pay upfront fees, registration charges, or deposits to claim prizes or daily jobs.")
+    actions.push("Legitimate companies do not distribute free mobile recharges or high salaries for simple online clicks.")
+    actions.push("Report and block the sender of this link immediately.")
+  } else if (category === "High Risk") {
+    actions.push("Do not sign in or enter credentials on this page.")
+    actions.push("Do not download files or complete payments through this link.")
+    actions.push("Type the official organization address manually in your browser.")
+  } else if (category === "Medium Risk") {
+    actions.push("Verify the domain name carefully before interacting.")
+    actions.push("Look for HTTPS and check that the company name matches the official domain.")
+    actions.push("If received in an unprompted message, confirm through the official app or helpline.")
+  } else {
+    actions.push("Always ensure sensitive transactions occur over HTTPS.")
+    actions.push("A low score reflects clean URL structure, but still confirm the sender and domain before entering passwords or OTPs.")
+  }
 
   return {
     score,
@@ -940,9 +1214,24 @@ export function analyzeMessage(message) {
 // Preset samples for rich demonstrations and testing
 export const URL_EXAMPLES = [
   {
+    label: "High Risk (Movie Piracy & Mirror Clone)",
+    badge: "High Risk",
+    url: "https://www.5movierulz.dentist/",
+  },
+  {
     label: "High Risk (Phishing IP & Sensitive Action)",
     badge: "High Risk",
     url: "http://192.168.1.8/verify/account?continue=@bank",
+  },
+  {
+    label: "High Risk (Illegal Betting & Gambling)",
+    badge: "High Risk",
+    url: "https://1xbet-online-betting.click/",
+  },
+  {
+    label: "High Risk (Free Recharge / Reward Scam)",
+    badge: "High Risk",
+    url: "https://freerecharge-jio-offer.xyz/",
   },
   {
     label: "Medium Risk (Shortener & KYC Keyword)",
