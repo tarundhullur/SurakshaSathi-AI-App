@@ -298,3 +298,61 @@ test("Security Test J: Strict 10-digit Indian phone number validation and backen
     "adminService.createUser must reject invalid Indian phone numbers"
   )
 })
+
+test("Security Test K: Strict Person Name Validation (no numbers allowed) and Duplicate Prevention", async () => {
+  const { validatePersonName, validateRelationship } = await import("../utils/inputValidators.js")
+
+  // 1. Rejects numbers in names
+  assert.equal(validatePersonName("23458").valid, false, "Numeric name 23458 must be rejected")
+  assert.match(validatePersonName("23458").error, /Numbers are not allowed in names/)
+
+  assert.equal(validatePersonName("Aashrith123").valid, false, "Name with trailing numbers must be rejected")
+  assert.match(validatePersonName("Aashrith123").error, /Numbers are not allowed in names/)
+
+  assert.equal(validatePersonName("User 007").valid, false, "Name with digits must be rejected")
+  assert.match(validatePersonName("User 007").error, /Numbers are not allowed in names/)
+
+  // 2. Accepts valid names (letters, spaces, dots, hyphens)
+  assert.equal(validatePersonName("Aashrith").valid, true)
+  assert.equal(validatePersonName("Tarun Dhullur").valid, true)
+  assert.equal(validatePersonName("Varun Reddy").valid, true)
+  assert.equal(validatePersonName("Dr. Sarah Jenkins-O'Connor").valid, true)
+
+  // 3. Relationships validation (no numbers allowed)
+  assert.equal(validateRelationship("Friend").valid, true)
+  assert.equal(validateRelationship("Friend123").valid, false)
+  assert.match(validateRelationship("Friend123").error, /Numbers are not allowed/)
+
+  // 4. Backend adminService.createUser rejects names with numbers
+  await assert.rejects(
+    async () => {
+      await adminService.createUser({
+        name: "User23458",
+        email: `bad-name-${Date.now()}@test.org`,
+        phone: "+91 98765 43210",
+      })
+    },
+    /Numbers are not allowed in names/,
+    "adminService.createUser must reject names containing numbers"
+  )
+
+  // 5. Backend adminService.createUser rejects duplicate phone numbers
+  const testPhone = "9988776655"
+  await adminService.createUser({
+    name: "Original Citizen",
+    email: `orig-${Date.now()}@test.org`,
+    phone: testPhone,
+  })
+
+  await assert.rejects(
+    async () => {
+      await adminService.createUser({
+        name: "Duplicate Phone Citizen",
+        email: `dup-${Date.now()}@test.org`,
+        phone: testPhone,
+      })
+    },
+    /already exists/,
+    "adminService.createUser must reject duplicate phone numbers"
+  )
+})

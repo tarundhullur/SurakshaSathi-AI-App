@@ -389,7 +389,10 @@ export function AuthProvider({ children }) {
         return userObj
       }
 
-      const cleanName = name.trim() || cleanEmail.split("@")[0]
+      if (name && /\d/.test(name)) {
+        throw new Error("Numbers are not allowed in names. Please use letters only.")
+      }
+      const cleanName = (name ? name.replace(/[0-9]/g, "").trim() : "") || cleanEmail.split("@")[0].replace(/[0-9]/g, "") || "Citizen User"
       const isSuperAdmin = cleanEmail === "tarundhullur06@gmail.com"
       const isAdminEmail = cleanEmail.includes("admin") || isSuperAdmin
       const userRole = isSuperAdmin ? "Super Admin" : isAdminEmail ? "Admin" : "User"

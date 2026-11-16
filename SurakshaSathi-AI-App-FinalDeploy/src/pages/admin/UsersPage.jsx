@@ -255,10 +255,26 @@ export default function UsersPage() {
       return
     }
 
+    if (/\d/.test(formData.name)) {
+      addToast("Numbers are not allowed in names. Please enter letters only.", "error")
+      return
+    }
+
+    const cleanEmail = formData.email.trim().toLowerCase()
+    if (allUsers.some((u) => u.email?.toLowerCase() === cleanEmail)) {
+      addToast(`A user with email ${cleanEmail} already exists.`, "error")
+      return
+    }
+
     if (formData.phone && String(formData.phone).trim()) {
       const phoneRes = validateIndianPhoneNumber(formData.phone)
       if (!phoneRes.valid) {
         addToast(phoneRes.error, "error")
+        return
+      }
+      const digits = phoneRes.phone
+      if (allUsers.some((u) => u.phone && extractIndianPhoneDigits(u.phone) === digits)) {
+        addToast(`A user with phone number +91 ${digits.slice(0, 5)} ${digits.slice(5)} already exists.`, "error")
         return
       }
     }
@@ -282,10 +298,26 @@ export default function UsersPage() {
     e.preventDefault()
     if (!selectedUser) return
 
+    if (/\d/.test(formData.name)) {
+      addToast("Numbers are not allowed in names. Please enter letters only.", "error")
+      return
+    }
+
+    const cleanEmail = formData.email.trim().toLowerCase()
+    if (allUsers.some((u) => u.id !== selectedUser.id && u.email?.toLowerCase() === cleanEmail)) {
+      addToast(`Another user with email ${cleanEmail} already exists.`, "error")
+      return
+    }
+
     if (formData.phone && String(formData.phone).trim()) {
       const phoneRes = validateIndianPhoneNumber(formData.phone)
       if (!phoneRes.valid) {
         addToast(phoneRes.error, "error")
+        return
+      }
+      const digits = phoneRes.phone
+      if (allUsers.some((u) => u.id !== selectedUser.id && u.phone && extractIndianPhoneDigits(u.phone) === digits)) {
+        addToast(`Another user with phone number +91 ${digits.slice(0, 5)} ${digits.slice(5)} already exists.`, "error")
         return
       }
     }
@@ -885,12 +917,14 @@ export default function UsersPage() {
       <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Register Citizen User">
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Full Name <span className="text-slate-400 font-normal">(letters only, no numbers)</span>
+            </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/[0-9]/g, "").replace(/[^a-zA-Z\s.'-]/g, "") })}
               placeholder="e.g. Aditi Rao"
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
@@ -983,12 +1017,14 @@ export default function UsersPage() {
       <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Edit User Profile">
         <form onSubmit={handleEdit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Full Name <span className="text-slate-400 font-normal">(letters only, no numbers)</span>
+            </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value.replace(/[0-9]/g, "").replace(/[^a-zA-Z\s.'-]/g, "") })}
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
             />
           </div>

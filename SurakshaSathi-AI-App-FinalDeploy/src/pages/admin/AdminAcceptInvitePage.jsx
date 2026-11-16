@@ -85,6 +85,16 @@ export default function AdminAcceptInvitePage() {
     e.preventDefault()
     setSubmitError("")
 
+    if (/\d/.test(name)) {
+      setSubmitError("Numbers are not allowed in names. Please use letters only.")
+      return
+    }
+
+    if (!name || name.trim().length < 2) {
+      setSubmitError("Please enter a valid full name (at least 2 letters).")
+      return
+    }
+
     if (password.length < 8) {
       setSubmitError("Password must be at least 8 characters long.")
       return
@@ -239,7 +249,7 @@ export default function AdminAcceptInvitePage() {
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Your Full Name
+                    Your Full Name <span className="text-slate-400 font-normal">(letters only, no numbers)</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -249,7 +259,7 @@ export default function AdminAcceptInvitePage() {
                       type="text"
                       required
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => setName(e.target.value.replace(/[0-9]/g, "").replace(/[^a-zA-Z\s.'-]/g, ""))}
                       placeholder="e.g. Sarah Jenkins"
                       className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition"
                     />

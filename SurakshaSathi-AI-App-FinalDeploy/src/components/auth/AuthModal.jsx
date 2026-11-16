@@ -69,6 +69,11 @@ export default function AuthModal() {
       return
     }
 
+    if (name && /\d/.test(name)) {
+      setError("Numbers are not allowed in name. Please use letters only.")
+      return
+    }
+
     setSubmitting(true)
     try {
       await loginWithEmail(cleanEmail, password, isCreatingPassword, name)
@@ -131,14 +136,19 @@ export default function AuthModal() {
             {mode === "signup" && !isExistingEmail && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Full Name (Optional)
+                  Full Name <span className="text-slate-400 font-normal">(Letters only, no numbers)</span>
                 </label>
                 <div className="relative">
                   <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
+                    maxLength={50}
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      const sanitized = e.target.value.replace(/[0-9]/g, "").replace(/[^a-zA-Z\s.'-]/g, "").slice(0, 50)
+                      setName(sanitized)
+                      if (error) setError("")
+                    }}
                     placeholder="e.g. Rahul Sharma"
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition"
                   />

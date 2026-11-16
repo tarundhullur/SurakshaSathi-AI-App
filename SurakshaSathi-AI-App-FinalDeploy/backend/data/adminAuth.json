@@ -4,7 +4,7 @@
       "id": "usr-super-1792175220323",
       "name": "Tarun Dhullur",
       "email": "tarundhullur06@gmail.com",
-      "passwordHash": "543c111f41b74f8a86ca073095caecd7:9280c55e48379afc027660e9c03c4283ef14c9c957a09c692e9f77cf008061ef55036130c8b60e2d36f344ad0e1ea27ddc4e024555b2bc4b8237706a2be567fc",
+      "passwordHash": "b2f216453eaf76d0d060ab52f9cb929d:f6d54a7ec6b92bcbad08fc4c95aaf62c8d822333bf339c46c4cf1766863553b9a4453056ba3f49f0dbbd9069746f18f9e2151b45ce0a4a6ed5e4484e54400165",
       "role": "Super Admin",
       "status": "Active",
       "avatar": "TD",
@@ -28,6 +28,21 @@
       "twoFactorSecret": "",
       "createdAt": "2026-11-12T08:19:00.000Z",
       "lastLogin": "2026-11-12T08:19:00.000Z",
+      "totalComparisons": 0
+    },
+    {
+      "id": "usr-admin-aashrith",
+      "name": "Aashrith P",
+      "email": "aashrithp47@gmail.com",
+      "passwordHash": "b2f216453eaf76d0d060ab52f9cb929d:f6d54a7ec6b92bcbad08fc4c95aaf62c8d822333bf339c46c4cf1766863553b9a4453056ba3f49f0dbbd9069746f18f9e2151b45ce0a4a6ed5e4484e54400165",
+      "role": "Super Admin",
+      "status": "Active",
+      "avatar": "AP",
+      "phone": "+91 97777 77777",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": "",
+      "createdAt": "2026-11-12T09:15:00.000Z",
+      "lastLogin": "2026-11-12T09:15:00.000Z",
       "totalComparisons": 0
     }
   ],

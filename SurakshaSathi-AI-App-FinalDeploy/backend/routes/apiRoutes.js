@@ -1,7 +1,11 @@
 import express from "express"
 import { analyzeMessage } from "../services/messageAnalyzer.js"
 import { analyzeUrl } from "../services/urlAnalyzer.js"
-import { validateIndianPhoneNumber } from "../utils/phoneValidator.js"
+import {
+  validateIndianPhoneNumber,
+  validatePersonName,
+  validateRelationship,
+} from "../utils/inputValidators.js"
 import ScanHistory from "../models/ScanHistory.js"
 
 const router = express.Router()
@@ -43,9 +47,24 @@ router.post("/analyze/url", async (request, response) => {
   }
 })
 
-// Strict 10-digit Indian phone number validation endpoint
+// Strict contact validation endpoint (Name letters only, phone 10-digit Indian, relationship letters only)
 router.post("/contacts/validate", (request, response) => {
-  const { phone } = request.body || {}
+  const { phone, name, relationship } = request.body || {}
+
+  if (name !== undefined && name !== null && String(name).trim()) {
+    const nameRes = validatePersonName(name)
+    if (!nameRes.valid) {
+      return response.status(400).json({ valid: false, message: nameRes.error })
+    }
+  }
+
+  if (relationship !== undefined && relationship !== null && String(relationship).trim()) {
+    const relRes = validateRelationship(relationship)
+    if (!relRes.valid) {
+      return response.status(400).json({ valid: false, message: relRes.error })
+    }
+  }
+
   const result = validateIndianPhoneNumber(phone)
   if (!result.valid) {
     return response.status(400).json({
@@ -63,24 +82,28 @@ router.post("/contacts/validate", (request, response) => {
 // Emergency contact creation/verification endpoint
 router.post("/contacts", (request, response) => {
   const { name, phone, relationship } = request.body || {}
-  if (!name || typeof name !== "string" || name.trim().length < 2) {
-    return response.status(400).json({
-      message: "Contact name is required and must be at least 2 characters.",
-    })
+  const nameRes = validatePersonName(name)
+  if (!nameRes.valid) {
+    return response.status(400).json({ message: nameRes.error })
   }
-  const result = validateIndianPhoneNumber(phone)
-  if (!result.valid) {
-    return response.status(400).json({
-      message: result.error,
-    })
+
+  const phoneRes = validateIndianPhoneNumber(phone)
+  if (!phoneRes.valid) {
+    return response.status(400).json({ message: phoneRes.error })
   }
+
+  const relRes = validateRelationship(relationship)
+  if (!relRes.valid) {
+    return response.status(400).json({ message: relRes.error })
+  }
+
   response.status(201).json({
     message: "Emergency contact validated successfully.",
     contact: {
       id: `cnt-${Date.now().toString(36)}`,
-      name: name.trim(),
-      phone: result.phone,
-      relationship: (relationship || "").trim(),
+      name: nameRes.name,
+      phone: phoneRes.phone,
+      relationship: relRes.relationship,
       createdAt: new Date().toISOString(),
     },
   })

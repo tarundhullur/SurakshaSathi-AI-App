@@ -10,7 +10,7 @@ import {
   TriangleAlert,
 } from "lucide-react"
 import PageHeader from "../components/PageHeader.jsx"
-import { getContacts } from "../utils/contacts.js"
+import { getContacts, formatIndianPhoneNumber } from "../utils/contacts.js"
 import { useAuth } from "../contexts/AuthContext.jsx"
 
 export default function SosPage() {
@@ -160,7 +160,7 @@ export default function SosPage() {
             <option value="">Choose later in your messaging app</option>
             {contacts.map((contact) => (
               <option key={contact.id} value={contact.phone}>
-                {contact.name} — {contact.phone}
+                {contact.name} — {formatIndianPhoneNumber(contact.phone)}
               </option>
             ))}
           </select>

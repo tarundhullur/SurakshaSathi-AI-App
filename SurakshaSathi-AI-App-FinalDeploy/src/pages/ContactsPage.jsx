@@ -9,6 +9,12 @@ import {
   isValidIndianPhoneNumber,
   validateIndianPhoneNumber,
   formatIndianPhoneNumber,
+  validateContactName,
+  sanitizeNameInput,
+  validateRelationship,
+  sanitizeRelationshipInput,
+  isDuplicateContactPhone,
+  deduplicateContacts,
 } from "../utils/contacts.js"
 
 const emptyForm = { name: "", phone: "", relationship: "" }
@@ -18,25 +24,44 @@ function sanitizePhoneInput(value) {
 }
 
 export default function ContactsPage() {
-  const [contacts, setContacts] = useState(getContacts)
+  const [contacts, setContacts] = useState(() => deduplicateContacts(getContacts()))
   const [form, setForm] = useState(emptyForm)
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState("")
+  const [nameError, setNameError] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
   const isInvalidStart = form.phone.length > 0 && !/^[6-9]/.test(form.phone)
   const isCompleteValid = form.phone.length === 10 && /^[6-9]\d{9}$/.test(form.phone)
   const invalidCount = contacts.filter((c) => !isValidIndianPhoneNumber(c.phone)).length
+  const isDuplicate = form.phone.length === 10 && isDuplicateContactPhone(contacts, form.phone, editingId)
 
   async function handleSubmit(event) {
     event.preventDefault()
-    if (form.name.trim().length < 2) {
-      return setError("Enter a contact name with at least 2 characters.")
+
+    // 1. Validate Name (Strictly no numbers allowed)
+    const nameValidation = validateContactName(form.name)
+    if (!nameValidation.valid) {
+      return setError(nameValidation.error)
     }
 
-    const validation = validateIndianPhoneNumber(form.phone)
-    if (!validation.valid) {
-      return setError(validation.error)
+    // 2. Validate Phone (Strict 10-digit Indian mobile number)
+    const phoneValidation = validateIndianPhoneNumber(form.phone)
+    if (!phoneValidation.valid) {
+      return setError(phoneValidation.error)
+    }
+
+    // 3. Prevent duplicate contacts (Same phone number cannot be added again)
+    if (isDuplicateContactPhone(contacts, phoneValidation.phone, editingId)) {
+      return setError(
+        `Duplicate contact: A contact with phone number +91 ${phoneValidation.phone.slice(0, 5)} ${phoneValidation.phone.slice(5)} is already saved in your contacts list.`
+      )
+    }
+
+    // 4. Validate Relationship (Strictly no numbers allowed)
+    const relValidation = validateRelationship(form.relationship)
+    if (!relValidation.valid) {
+      return setError(relValidation.error)
     }
 
     setSubmitting(true)
@@ -46,12 +71,16 @@ export default function ContactsPage() {
       const response = await fetch("/api/contacts/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: validation.phone, name: form.name.trim() }),
+        body: JSON.stringify({
+          name: nameValidation.name,
+          phone: phoneValidation.phone,
+          relationship: relValidation.relationship,
+        }),
       })
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
         setSubmitting(false)
-        return setError(data.message || "Backend rejected phone number: Must be a 10-digit Indian number.")
+        return setError(data.message || "Backend rejected contact: Numbers are not allowed in names, and phone must be a 10-digit Indian number.")
       }
     } catch {
       // Local server offline or disconnected; proceed with client validation
@@ -59,9 +88,9 @@ export default function ContactsPage() {
 
     const contact = {
       ...form,
-      phone: validation.phone,
-      name: form.name.trim(),
-      relationship: form.relationship.trim(),
+      phone: phoneValidation.phone,
+      name: nameValidation.name,
+      relationship: relValidation.relationship,
       id: editingId || Date.now().toString(),
     }
     const next = editingId
@@ -74,6 +103,7 @@ export default function ContactsPage() {
       setForm(emptyForm)
       setEditingId(null)
       setError("")
+      setNameError("")
     } catch (saveErr) {
       setError(saveErr.message)
     } finally {
@@ -81,15 +111,35 @@ export default function ContactsPage() {
     }
   }
 
+  function handleNameChange(e) {
+    const raw = e.target.value
+    if (/\d/.test(raw)) {
+      setNameError("Numbers are not allowed in contact names. Please use letters only.")
+    } else {
+      setNameError("")
+    }
+    const sanitized = sanitizeNameInput(raw)
+    setForm({ ...form, name: sanitized })
+    if (error) setError("")
+  }
+
+  function handleRelationshipChange(e) {
+    const raw = e.target.value
+    const sanitized = sanitizeRelationshipInput(raw)
+    setForm({ ...form, relationship: sanitized })
+    if (error) setError("")
+  }
+
   function editContact(contact) {
     const digits = extractIndianPhoneDigits(contact.phone)
     setForm({
-      name: contact.name,
+      name: sanitizeNameInput(contact.name),
       phone: digits,
-      relationship: contact.relationship,
+      relationship: sanitizeRelationshipInput(contact.relationship),
     })
     setEditingId(contact.id)
     setError("")
+    setNameError("")
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
@@ -98,15 +148,27 @@ export default function ContactsPage() {
       return
     const next = contacts.filter((contact) => contact.id !== id)
     setContacts(next)
-    localStorage.setItem("suraksha-emergency-contacts", JSON.stringify(next))
+    try {
+      saveContacts(next)
+    } catch {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("suraksha-emergency-contacts", JSON.stringify(next))
+      }
+    }
   }
 
   function cleanAllInvalid() {
     if (!window.confirm(`Remove ${invalidCount} invalid contact(s) that do not meet the 10-digit Indian number rule?`))
       return
-    const validOnly = contacts.filter((c) => isValidIndianPhoneNumber(c.phone))
+    const validOnly = deduplicateContacts(contacts.filter((c) => isValidIndianPhoneNumber(c.phone)))
     setContacts(validOnly)
-    localStorage.setItem("suraksha-emergency-contacts", JSON.stringify(validOnly))
+    try {
+      saveContacts(validOnly)
+    } catch {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("suraksha-emergency-contacts", JSON.stringify(validOnly))
+      }
+    }
   }
 
   return (
@@ -127,22 +189,42 @@ export default function ContactsPage() {
 
           {/* Contact Name */}
           <label className="mt-5 block text-sm font-bold">
-            <span>Contact name</span>
+            <span className="flex items-center justify-between">
+              <span>Contact name</span>
+              <span className="text-xs font-semibold text-slate-500">
+                Letters only (no numbers)
+              </span>
+            </span>
             <input
               type="text"
               required
+              maxLength={50}
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              onChange={handleNameChange}
               placeholder="e.g. Ananya Sharma"
-              className="mt-2 w-full rounded-xl border border-slate-300 bg-slate-50 p-3.5 text-sm font-normal outline-none focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
+              className={`mt-2 w-full rounded-xl border p-3.5 text-sm font-normal outline-none transition ${
+                nameError
+                  ? "border-2 border-rose-400 bg-rose-50/40 text-rose-900 focus:border-rose-500 focus:ring-4 focus:ring-rose-100"
+                  : "border border-slate-300 bg-slate-50 text-slate-900 focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
+              }`}
             />
+            {nameError && (
+              <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-rose-600">
+                <AlertCircle size={14} className="shrink-0" />
+                {nameError}
+              </p>
+            )}
           </label>
 
           {/* Phone Number with strict 10-digit Indian rules */}
           <label className="mt-5 block text-sm font-bold">
             <span className="flex items-center justify-between">
               <span>Phone number (Indian 10-digit mobile)</span>
-              {isInvalidStart ? (
+              {isDuplicate ? (
+                <span className="text-xs font-bold text-rose-600">
+                  Already in contacts
+                </span>
+              ) : isInvalidStart ? (
                 <span className="text-xs font-bold text-rose-600">
                   {form.phone.length}/{MAX_PHONE_DIGITS} digits (Starts with {form.phone[0]})
                 </span>
@@ -175,7 +257,7 @@ export default function ContactsPage() {
                 }
                 placeholder="e.g. 9876543210"
                 className={`w-full rounded-xl p-3.5 text-sm font-normal outline-none transition ${
-                  isInvalidStart
+                  isDuplicate || isInvalidStart
                     ? "border-2 border-rose-400 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-4 focus:ring-rose-100"
                     : isCompleteValid
                     ? "border-2 border-emerald-500 bg-emerald-50/20 text-slate-900 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
@@ -184,7 +266,12 @@ export default function ContactsPage() {
               />
             </div>
             {/* Live guidance message under phone input */}
-            {isInvalidStart ? (
+            {isDuplicate ? (
+              <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-rose-600">
+                <AlertCircle size={14} className="shrink-0" />
+                This phone number is already saved. Duplicate contacts are not allowed.
+              </p>
+            ) : isInvalidStart ? (
               <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-rose-600">
                 <AlertCircle size={14} className="shrink-0" />
                 Invalid Indian number: Indian mobile numbers must start with 6, 7, 8, or 9.
@@ -208,11 +295,15 @@ export default function ContactsPage() {
 
           {/* Relationship */}
           <label className="mt-5 block text-sm font-bold">
-            <span>Relationship (optional)</span>
+            <span className="flex items-center justify-between">
+              <span>Relationship (optional)</span>
+              <span className="text-xs font-normal text-slate-400">Letters only (e.g. Parent, Friend)</span>
+            </span>
             <input
               type="text"
+              maxLength={30}
               value={form.relationship}
-              onChange={(e) => setForm({ ...form, relationship: e.target.value })}
+              onChange={handleRelationshipChange}
               placeholder="e.g. Parent or friend"
               className="mt-2 w-full rounded-xl border border-slate-300 bg-slate-50 p-3.5 text-sm font-normal outline-none focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
             />

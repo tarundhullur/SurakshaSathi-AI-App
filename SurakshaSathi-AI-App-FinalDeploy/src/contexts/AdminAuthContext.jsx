@@ -213,18 +213,38 @@ export function AdminAuthProvider({ children }) {
     }
 
     // Verified static admin credentials fallback when Express backend is unavailable
-    if (
-      cleanEmail === "mvarunreddymassireddy@gmail.com" &&
-      password === "Vozx@suraksha.team4"
-    ) {
-      const localAdminUser = {
-        id: "usr-super-varun",
-        name: "Varun Reddy",
-        email: "mvarunreddymassireddy@gmail.com",
-        role: "Super Admin",
-        status: "Active",
-        avatar: "VR",
-      }
+    const isVarun = cleanEmail === "mvarunreddymassireddy@gmail.com" && (password === "Vozx@suraksha.team4" || password === "admin2006")
+    const isTarun = cleanEmail === "tarundhullur06@gmail.com" && (password === "admin2006" || password === "Vozx@suraksha.team4")
+    const isAashrith = cleanEmail === "aashrithp47@gmail.com" && (password === "admin2006" || password === "Vozx@suraksha.team4")
+
+    if (isVarun || isTarun || isAashrith) {
+      const localAdminUser = isVarun
+        ? {
+            id: "usr-super-varun",
+            name: "Varun Reddy",
+            email: "mvarunreddymassireddy@gmail.com",
+            role: "Super Admin",
+            status: "Active",
+            avatar: "VR",
+          }
+        : isTarun
+        ? {
+            id: "usr-super-1792175220323",
+            name: "Tarun Dhullur",
+            email: "tarundhullur06@gmail.com",
+            role: "Super Admin",
+            status: "Active",
+            avatar: "TD",
+          }
+        : {
+            id: "usr-admin-aashrith",
+            name: "Aashrith P",
+            email: "aashrithp47@gmail.com",
+            role: "Super Admin",
+            status: "Active",
+            avatar: "AP",
+          }
+
       const localToken = `local-verified-admin-${Date.now().toString(36)}`
       try {
         localStorage.setItem("surakshasathi_admin_token", localToken)
