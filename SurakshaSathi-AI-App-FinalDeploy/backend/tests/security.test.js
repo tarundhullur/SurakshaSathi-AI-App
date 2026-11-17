@@ -356,3 +356,79 @@ test("Security Test K: Strict Person Name Validation (no numbers allowed) and Du
     "adminService.createUser must reject duplicate phone numbers"
   )
 })
+
+test("Security Test L: Google Account Verification and Wrong Email Rejection", async () => {
+  const { verifyEmailAccount, validateEmailAddress } = await import("../utils/inputValidators.js")
+
+  // 1. Verifies authentic Google accounts
+  const google1 = verifyEmailAccount("tarundhullur06@gmail.com")
+  assert.equal(google1.valid, true)
+  assert.equal(google1.isGoogle, true)
+  assert.equal(google1.label, "Verified Google Account")
+
+  const google2 = verifyEmailAccount("aashrithp47@gmail.com")
+  assert.equal(google2.valid, true)
+  assert.equal(google2.isGoogle, true)
+
+  const google3 = verifyEmailAccount("mvarunreddymassireddy@gmail.com")
+  assert.equal(google3.valid, true)
+  assert.equal(google3.isGoogle, true)
+
+  // 2. Rejects Gmail usernames shorter than 6 characters (Google official requirement)
+  const tooShort = verifyEmailAccount("abc@gmail.com")
+  assert.equal(tooShort.valid, false)
+  assert.match(tooShort.error, /Enter correct email/)
+  assert.match(tooShort.error, /at least 6 characters/)
+
+  // 3. Rejects illegal special characters in Gmail (underscores, hyphens)
+  const underscore = verifyEmailAccount("tarun_dhullur@gmail.com")
+  assert.equal(underscore.valid, false)
+  assert.match(underscore.error, /underscores/)
+
+  const hyphen = verifyEmailAccount("tarun-dhullur@gmail.com")
+  assert.equal(hyphen.valid, false)
+  assert.match(hyphen.error, /hyphens/)
+
+  // 4. Rejects consecutive dots or leading/trailing dots in Gmail
+  const consecutiveDots = verifyEmailAccount("tarun..dhullur@gmail.com")
+  assert.equal(consecutiveDots.valid, false)
+  assert.match(consecutiveDots.error, /consecutive periods/)
+
+  const leadingDot = verifyEmailAccount(".tarundhullur@gmail.com")
+  assert.equal(leadingDot.valid, false)
+  assert.match(leadingDot.error, /start or end with a period/)
+
+  // 5. Detects common domain typos and suggests correct domain
+  const typo = verifyEmailAccount("tarun06@gmial.com")
+  assert.equal(typo.valid, false)
+  assert.match(typo.error, /Did you mean @gmail\.com/)
+  assert.equal(typo.suggestedEmail, "tarun06@gmail.com")
+
+  // 6. Rejects fake, placeholder, and disposable domains
+  const fake1 = verifyEmailAccount("name@example.com")
+  assert.equal(fake1.valid, false)
+  assert.match(fake1.error, /Enter correct email/)
+
+  const fake2 = verifyEmailAccount("test@mailinator.com")
+  assert.equal(fake2.valid, false)
+  assert.match(fake2.error, /Placeholder or disposable/)
+
+  // 7. Rejects malformed email missing @ or invalid domain
+  const malformed1 = verifyEmailAccount("notanemail")
+  assert.equal(malformed1.valid, false)
+  assert.match(malformed1.error, /Missing '@' symbol/)
+
+  const malformed2 = verifyEmailAccount("user@nodomain")
+  assert.equal(malformed2.valid, false)
+  assert.match(malformed2.error, /valid extension/)
+
+  // 8. Accepts legitimate non-Google email providers
+  const outlook = verifyEmailAccount("citizen@outlook.com")
+  assert.equal(outlook.valid, true)
+  assert.equal(outlook.isGoogle, false)
+  assert.equal(outlook.label, "Verified Email Account")
+
+  // 9. validateEmailAddress wrapper works with verifyEmailAccount
+  assert.equal(validateEmailAddress("tarundhullur06@gmail.com").valid, true)
+  assert.equal(validateEmailAddress("bad@gmial.com").valid, false)
+})

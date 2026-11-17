@@ -5,6 +5,7 @@ import {
   validateIndianPhoneNumber,
   validatePersonName,
   validateRelationship,
+  verifyEmailAccount,
 } from "../utils/inputValidators.js"
 import ScanHistory from "../models/ScanHistory.js"
 
@@ -107,6 +108,15 @@ router.post("/contacts", (request, response) => {
       createdAt: new Date().toISOString(),
     },
   })
+})
+
+router.post("/auth/verify-email", (request, response) => {
+  const { email } = request.body || {}
+  const result = verifyEmailAccount(email)
+  if (!result.valid) {
+    return response.status(400).json(result)
+  }
+  return response.json(result)
 })
 
 router.get("/history", async (request, response) => {

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { detectLoginPlaceSync, resolveLoginPlaceAsync, formatLoginDate } from "../utils/location.js"
+import { verifyEmailAccount } from "../utils/emailValidator.js"
 
 const AuthContext = createContext(null)
 
@@ -351,8 +352,9 @@ export function AuthProvider({ children }) {
       await new Promise((res) => setTimeout(res, 250))
 
       const cleanEmail = (email || "").trim().toLowerCase()
-      if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
-        throw new Error("Please enter a valid email address.")
+      const verification = verifyEmailAccount(cleanEmail)
+      if (!verification.valid) {
+        throw new Error(verification.error || "Enter correct email")
       }
       if (!password) {
         throw new Error("Please enter a password.")
