@@ -33,7 +33,9 @@ export default function AuthModal() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [emailVerification, setEmailVerification] = useState(null)
@@ -45,6 +47,7 @@ export default function AuthModal() {
     setError("")
     if (!authModalOpen) {
       setPassword("")
+      setConfirmPassword("")
       setEmailVerification(null)
     }
   }, [authModalMode, authModalOpen])
@@ -106,6 +109,17 @@ export default function AuthModal() {
       return
     }
 
+    if (isCreatingPassword) {
+      if (!confirmPassword) {
+        setError("Please re-enter your password to confirm.")
+        return
+      }
+      if (password !== confirmPassword) {
+        setError("Passwords do not match. Please re-enter matching passwords.")
+        return
+      }
+    }
+
     if (name && /\d/.test(name)) {
       setError("Numbers are not allowed in name. Please use letters only.")
       return
@@ -146,11 +160,19 @@ export default function AuthModal() {
               <ShieldCheck size={26} />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              Sign In to SurakshaSathi
+              {isEmailValid
+                ? isExistingEmail
+                  ? "Sign In to SurakshaSathi"
+                  : "Create Citizen Account"
+                : mode === "signup"
+                ? "Sign Up for SurakshaSathi"
+                : "Sign In to SurakshaSathi"}
             </h2>
             <p className="mt-1 text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
-              {authModalMessage ||
-                "Access AI safety checks, verify scam messages, and unlock the emergency companion."}
+              {isEmailValid && !isExistingEmail
+                ? "New email detected — create and re-enter your password to set up your account."
+                : authModalMessage ||
+                  "Access AI safety checks, verify scam messages, and unlock the emergency companion."}
             </p>
           </div>
 
@@ -164,7 +186,7 @@ export default function AuthModal() {
 
           {/* Email Form */}
           <form onSubmit={handleSubmit} className="space-y-3.5">
-            {mode === "signup" && !isExistingEmail && (
+            {((!isExistingEmail && isEmailValid) || (mode === "signup" && !isExistingEmail)) && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Full Name <span className="text-slate-400 font-normal">(Letters only, no numbers)</span>
@@ -257,10 +279,15 @@ export default function AuthModal() {
               )}
             </div>
 
+            {/* Password Field 1: Enter Password (existing user) OR Create Password (new user) */}
             <div className={`transition-all duration-200 ${!isEmailValid ? "opacity-60" : "opacity-100"}`}>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-semibold text-slate-700">
-                  {isEmailValid ? "Enter Password" : "Password"}
+                  {isEmailValid
+                    ? isExistingEmail
+                      ? "Enter Password"
+                      : "Create Password"
+                    : "Password"}
                 </label>
                 <span className="text-[11px] font-medium text-slate-500">
                   Up to 10 characters only ({password.length}/10)
@@ -281,7 +308,9 @@ export default function AuthModal() {
                   placeholder={
                     !isEmailValid
                       ? "Enter a verified email above first"
-                      : "Enter password (up to 10 characters)"
+                      : isExistingEmail
+                      ? "Enter password (up to 10 characters)"
+                      : "Create password (up to 10 characters)"
                   }
                   className={`w-full pl-10 pr-10 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 text-xs focus:outline-none transition ${
                     !isEmailValid
@@ -298,29 +327,92 @@ export default function AuthModal() {
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+            </div>
 
+            {/* Password Field 2: Re-enter Password (only for new users when creating password) */}
+            {isEmailValid && !isExistingEmail && (
+              <div className="transition-all duration-200 animate-fade-in">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Re-enter Password
+                  </label>
+                  <span className="text-[11px] font-medium text-slate-500">
+                    ({confirmPassword.length}/10)
+                  </span>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    maxLength={10}
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value.slice(0, 10))
+                      if (error) setError("")
+                    }}
+                    placeholder="Re-enter password to confirm"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl border bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                  >
+                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+
+                {confirmPassword && (
+                  <p
+                    className={`mt-1.5 text-[11px] font-semibold flex items-center gap-1.5 ${
+                      confirmPassword === password ? "text-emerald-600" : "text-rose-600"
+                    }`}
+                  >
+                    {confirmPassword === password ? (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>Passwords match</span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                        <span>Passwords do not match</span>
+                      </>
+                    )}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Helper Guidance Subtext */}
+            <div>
               {!isEmailValid ? (
                 <p className="mt-1 text-[11px] text-slate-500">
                   {emailVerification && !emailVerification.valid && !emailVerification.incomplete
                     ? "Enter correct email above to unlock password entry."
                     : "Enter and verify your email above to continue."}
                 </p>
+              ) : isExistingEmail ? (
+                <p className="mt-1 text-[11px] font-medium text-teal-700">
+                  Existing account verified — enter your password to sign in.
+                </p>
               ) : (
-                <p
-                  className={`mt-1 text-[11px] font-medium ${
-                    isExistingEmail ? "text-teal-700" : "text-teal-700"
-                  }`}
-                >
-                  {isExistingEmail
-                    ? "Existing account verified — enter your password to sign in."
-                    : "Original account verified — enter password to continue (up to 10 characters only)."}
+                <p className="mt-1 text-[11px] font-medium text-blue-600">
+                  Original account verified — create and re-enter your password (up to 10 characters).
                 </p>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={submitting || authLoading || !isEmailValid || !password}
+              disabled={
+                submitting ||
+                authLoading ||
+                !isEmailValid ||
+                !password ||
+                (!isExistingEmail && (!confirmPassword || password !== confirmPassword))
+              }
               className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-lg shadow-slate-900/20 transition hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {submitting || authLoading ? (
@@ -333,9 +425,14 @@ export default function AuthModal() {
                   <span>Enter Correct Email to Continue</span>
                   <ArrowRight size={15} />
                 </>
-              ) : (
+              ) : isExistingEmail ? (
                 <>
                   <span>Sign In & Continue</span>
+                  <ArrowRight size={15} />
+                </>
+              ) : (
+                <>
+                  <span>Create Password & Continue</span>
                   <ArrowRight size={15} />
                 </>
               )}

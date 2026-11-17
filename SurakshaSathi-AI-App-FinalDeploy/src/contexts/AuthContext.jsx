@@ -342,7 +342,21 @@ export function AuthProvider({ children }) {
     const cleanEmail = (email || "").trim().toLowerCase()
     if (!cleanEmail) return false
     const accounts = getStoredUserAccounts()
-    return Boolean(accounts[cleanEmail])
+    if (accounts[cleanEmail]) return true
+
+    try {
+      const rawUsers = localStorage.getItem("surakshasathi_registered_users")
+      const list = rawUsers ? JSON.parse(rawUsers) : []
+      if (Array.isArray(list) && list.some((u) => u.email?.toLowerCase() === cleanEmail)) {
+        return true
+      }
+    } catch {}
+
+    if (cleanEmail === "tarundhullur06@gmail.com" || cleanEmail === "mvarunreddymassireddy@gmail.com") {
+      return true
+    }
+
+    return false
   }, [])
 
   // 3. Email & Password Sign In / Sign Up
