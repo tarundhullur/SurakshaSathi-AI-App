@@ -88,7 +88,7 @@ export default function AuthModal() {
   const isValidEmail = isEmailValid
   const isGoogleAccount = emailVerification?.isGoogle === true
   const isExistingEmail = isEmailValid && hasUserAccount(cleanEmail)
-  const isCreatingPassword = isEmailValid ? !isExistingEmail : mode === "signup"
+  const isCreatingPassword = isExistingEmail ? false : mode === "signup"
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -104,8 +104,8 @@ export default function AuthModal() {
       return
     }
 
-    if (password.length > 10) {
-      setError("Password can be up to 10 characters only.")
+    if (password.length > 64) {
+      setError("Password can be up to 64 characters only.")
       return
     }
 
@@ -160,17 +160,13 @@ export default function AuthModal() {
               <ShieldCheck size={26} />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              {isEmailValid
-                ? isExistingEmail
-                  ? "Sign In to SurakshaSathi"
-                  : "Create Citizen Account"
-                : mode === "signup"
-                ? "Sign Up for SurakshaSathi"
+              {isCreatingPassword
+                ? "Create Citizen Account"
                 : "Sign In to SurakshaSathi"}
             </h2>
             <p className="mt-1 text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
-              {isEmailValid && !isExistingEmail
-                ? "New email detected — create and re-enter your password to set up your account."
+              {isCreatingPassword
+                ? "Create and re-enter your password to set up your safety account."
                 : authModalMessage ||
                   "Access AI safety checks, verify scam messages, and unlock the emergency companion."}
             </p>
@@ -186,7 +182,7 @@ export default function AuthModal() {
 
           {/* Email Form */}
           <form onSubmit={handleSubmit} className="space-y-3.5">
-            {((!isExistingEmail && isEmailValid) || (mode === "signup" && !isExistingEmail)) && (
+            {isCreatingPassword && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Full Name <span className="text-slate-400 font-normal">(Letters only, no numbers)</span>
@@ -284,13 +280,13 @@ export default function AuthModal() {
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-semibold text-slate-700">
                   {isEmailValid
-                    ? isExistingEmail
-                      ? "Enter Password"
-                      : "Create Password"
+                    ? isCreatingPassword
+                      ? "Create Password"
+                      : "Enter Password"
                     : "Password"}
                 </label>
                 <span className="text-[11px] font-medium text-slate-500">
-                  Up to 10 characters only ({password.length}/10)
+                  {password.length > 0 ? `(${password.length} chars)` : "Up to 50 characters"}
                 </span>
               </div>
               <div className="relative">
@@ -299,18 +295,18 @@ export default function AuthModal() {
                   type={showPassword ? "text" : "password"}
                   required
                   disabled={!isEmailValid}
-                  maxLength={10}
+                  maxLength={50}
                   value={password}
                   onChange={(e) => {
-                    setPassword(e.target.value.slice(0, 10))
+                    setPassword(e.target.value.slice(0, 50))
                     if (error) setError("")
                   }}
                   placeholder={
                     !isEmailValid
                       ? "Enter a verified email above first"
-                      : isExistingEmail
-                      ? "Enter password (up to 10 characters)"
-                      : "Create password (up to 10 characters)"
+                      : isCreatingPassword
+                      ? "Create password"
+                      : "Enter password"
                   }
                   className={`w-full pl-10 pr-10 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 text-xs focus:outline-none transition ${
                     !isEmailValid
@@ -330,14 +326,14 @@ export default function AuthModal() {
             </div>
 
             {/* Password Field 2: Re-enter Password (only for new users when creating password) */}
-            {isEmailValid && !isExistingEmail && (
+            {isEmailValid && isCreatingPassword && (
               <div className="transition-all duration-200 animate-fade-in">
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-xs font-semibold text-slate-700">
                     Re-enter Password
                   </label>
                   <span className="text-[11px] font-medium text-slate-500">
-                    ({confirmPassword.length}/10)
+                    {confirmPassword.length > 0 ? `(${confirmPassword.length} chars)` : ""}
                   </span>
                 </div>
                 <div className="relative">
@@ -345,10 +341,10 @@ export default function AuthModal() {
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     required
-                    maxLength={10}
+                    maxLength={50}
                     value={confirmPassword}
                     onChange={(e) => {
-                      setConfirmPassword(e.target.value.slice(0, 10))
+                      setConfirmPassword(e.target.value.slice(0, 50))
                       if (error) setError("")
                     }}
                     placeholder="Re-enter password to confirm"
@@ -393,13 +389,13 @@ export default function AuthModal() {
                     ? "Enter correct email above to unlock password entry."
                     : "Enter and verify your email above to continue."}
                 </p>
-              ) : isExistingEmail ? (
-                <p className="mt-1 text-[11px] font-medium text-teal-700">
-                  Existing account verified — enter your password to sign in.
+              ) : isCreatingPassword ? (
+                <p className="mt-1 text-[11px] font-medium text-blue-600">
+                  Original account verified — create and re-enter your password to set up your account.
                 </p>
               ) : (
-                <p className="mt-1 text-[11px] font-medium text-blue-600">
-                  Original account verified — create and re-enter your password (up to 10 characters).
+                <p className="mt-1 text-[11px] font-medium text-teal-700">
+                  Existing account verified — enter your password to sign in.
                 </p>
               )}
             </div>
@@ -411,7 +407,7 @@ export default function AuthModal() {
                 authLoading ||
                 !isEmailValid ||
                 !password ||
-                (!isExistingEmail && (!confirmPassword || password !== confirmPassword))
+                (isCreatingPassword && (!confirmPassword || password !== confirmPassword))
               }
               className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-lg shadow-slate-900/20 transition hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
@@ -425,54 +421,52 @@ export default function AuthModal() {
                   <span>Enter Correct Email to Continue</span>
                   <ArrowRight size={15} />
                 </>
-              ) : isExistingEmail ? (
+              ) : isCreatingPassword ? (
                 <>
-                  <span>Sign In & Continue</span>
+                  <span>Create Password & Continue</span>
                   <ArrowRight size={15} />
                 </>
               ) : (
                 <>
-                  <span>Create Password & Continue</span>
+                  <span>Sign In & Continue</span>
                   <ArrowRight size={15} />
                 </>
               )}
             </button>
           </form>
 
-          {/* Toggle Mode Footer (shown before a full email is detected) */}
-          {!isValidEmail && (
-            <div className="mt-5 text-center text-xs text-slate-500">
-              {mode === "signin" ? (
-                <p>
-                  Don't have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode("signup")
-                      setError("")
-                    }}
-                    className="font-semibold text-slate-900 hover:underline"
-                  >
-                    Sign Up Free
-                  </button>
-                </p>
-              ) : (
-                <p>
-                  Already have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode("signin")
-                      setError("")
-                    }}
-                    className="font-semibold text-slate-900 hover:underline"
-                  >
-                    Sign In
-                  </button>
-                </p>
-              )}
-            </div>
-          )}
+          {/* Toggle Mode Footer */}
+          <div className="mt-4 text-center text-xs text-slate-500">
+            {isCreatingPassword ? (
+              <p>
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("signin")
+                    setError("")
+                  }}
+                  className="font-semibold text-slate-900 hover:underline"
+                >
+                  Sign In
+                </button>
+              </p>
+            ) : (
+              <p>
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("signup")
+                    setError("")
+                  }}
+                  className="font-semibold text-slate-900 hover:underline"
+                >
+                  Create New Account
+                </button>
+              </p>
+            )}
+          </div>
 
           <div className="mt-4 pt-4 border-t border-slate-100">
             <button

@@ -213,7 +213,7 @@ export function AdminAuthProvider({ children }) {
     }
 
     // Verified static admin credentials fallback when Express backend is unavailable
-    const isVarun = cleanEmail === "mvarunreddymassireddy@gmail.com" && (password === "Vozx@suraksha.team4" || password === "admin2006")
+    const isVarun = (cleanEmail === "mvarunreddymassireddy@gmail.com" || cleanEmail === "mvarunreddymassireddy00@gmail.com") && (password === "Vozx@suraksha.team4" || password === "admin2006")
     const isTarun = cleanEmail === "tarundhullur06@gmail.com" && (password === "admin2006" || password === "Vozx@suraksha.team4")
     const isAashrith = cleanEmail === "aashrithp47@gmail.com" && (password === "admin2006" || password === "Vozx@suraksha.team4")
 
@@ -222,7 +222,7 @@ export function AdminAuthProvider({ children }) {
         ? {
             id: "usr-super-varun",
             name: "Varun Reddy",
-            email: "mvarunreddymassireddy@gmail.com",
+            email: cleanEmail,
             role: "Super Admin",
             status: "Active",
             avatar: "VR",
