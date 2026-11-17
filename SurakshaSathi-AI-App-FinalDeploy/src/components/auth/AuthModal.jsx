@@ -146,11 +146,7 @@ export default function AuthModal() {
               <ShieldCheck size={26} />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              {isEmailValid
-                ? isExistingEmail
-                  ? "Sign In to SurakshaSathi"
-                  : "Create Citizen Password"
-                : "Sign In to SurakshaSathi"}
+              Sign In to SurakshaSathi
             </h2>
             <p className="mt-1 text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
               {authModalMessage ||
@@ -264,11 +260,7 @@ export default function AuthModal() {
             <div className={`transition-all duration-200 ${!isEmailValid ? "opacity-60" : "opacity-100"}`}>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-semibold text-slate-700">
-                  {isEmailValid
-                    ? isExistingEmail
-                      ? "Enter Password"
-                      : "Create Password"
-                    : "Password"}
+                  {isEmailValid ? "Enter Password" : "Password"}
                 </label>
                 <span className="text-[11px] font-medium text-slate-500">
                   Up to 10 characters only ({password.length}/10)
@@ -289,9 +281,7 @@ export default function AuthModal() {
                   placeholder={
                     !isEmailValid
                       ? "Enter a verified email above first"
-                      : isExistingEmail
-                      ? "Enter password (up to 10 characters)"
-                      : "Create password (up to 10 characters)"
+                      : "Enter password (up to 10 characters)"
                   }
                   className={`w-full pl-10 pr-10 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 text-xs focus:outline-none transition ${
                     !isEmailValid
@@ -318,12 +308,12 @@ export default function AuthModal() {
               ) : (
                 <p
                   className={`mt-1 text-[11px] font-medium ${
-                    isExistingEmail ? "text-teal-700" : "text-blue-600"
+                    isExistingEmail ? "text-teal-700" : "text-teal-700"
                   }`}
                 >
                   {isExistingEmail
                     ? "Existing account verified — enter your password to sign in."
-                    : "Original account verified — create a password (up to 10 characters only)."}
+                    : "Original account verified — enter password to continue (up to 10 characters only)."}
                 </p>
               )}
             </div>
@@ -345,11 +335,7 @@ export default function AuthModal() {
                 </>
               ) : (
                 <>
-                  <span>
-                    {isCreatingPassword
-                      ? "Create Password & Continue"
-                      : "Sign In & Continue"}
-                  </span>
+                  <span>Sign In & Continue</span>
                   <ArrowRight size={15} />
                 </>
               )}
