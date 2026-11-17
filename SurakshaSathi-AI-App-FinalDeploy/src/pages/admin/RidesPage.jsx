@@ -26,17 +26,24 @@ import {
 } from "../../services/adminApi.js"
 
 const categoryDisplayNames = {
+  "Scam Message": "Scam Message",
+  "Phishing URL": "Phishing URL",
+  "Emergency SOS": "Emergency SOS",
+  "Cyber Threat": "Cyber Threat",
   Car: "Scam Message",
   Bike: "Phishing URL",
   Scooter: "Emergency SOS",
   Auto: "Cyber Threat",
   "Message Scam": "Scam Message",
-  "Phishing URL": "Phishing URL",
-  "Emergency SOS": "Emergency SOS",
-  "Cyber Threat": "Cyber Threat",
 }
 
 const providerDisplayNames = {
+  "SurakshaSathi AI Engine": "SurakshaSathi AI Engine",
+  "PhishTank Threat Feed": "PhishTank Threat Feed",
+  "National CyberCrime (1930)": "National CyberCrime (1930)",
+  "Google SafeBrowsing": "Google SafeBrowsing",
+  "CERT-In Threat Feed": "CERT-In Threat Feed",
+  "Heuristic Inspection Rule": "Heuristic Inspection Rule",
   Uber: "SurakshaSathi AI Engine",
   Ola: "PhishTank Threat Feed",
   Rapido: "National CyberCrime (1930)",
@@ -45,14 +52,15 @@ const providerDisplayNames = {
 }
 
 const categoryColors = {
+  "Scam Message": "text-purple-600 bg-purple-50 border-purple-200",
+  "Phishing URL": "text-blue-600 bg-blue-50 border-blue-200",
+  "Emergency SOS": "text-cyan-600 bg-cyan-50 border-cyan-200",
+  "Cyber Threat": "text-amber-600 bg-amber-50 border-amber-200",
   Car: "text-purple-600 bg-purple-50 border-purple-200",
   Bike: "text-blue-600 bg-blue-50 border-blue-200",
   Scooter: "text-cyan-600 bg-cyan-50 border-cyan-200",
   Auto: "text-amber-600 bg-amber-50 border-amber-200",
   "Message Scam": "text-purple-600 bg-purple-50 border-purple-200",
-  "Phishing URL": "text-blue-600 bg-blue-50 border-blue-200",
-  "Emergency SOS": "text-cyan-600 bg-cyan-50 border-cyan-200",
-  "Cyber Threat": "text-amber-600 bg-amber-50 border-amber-200",
 }
 
 export default function RidesPage() {
@@ -79,8 +87,8 @@ export default function RidesPage() {
   // Form data for Detection Rule / Scan
   const [formData, setFormData] = useState({
     title: "",
-    category: "Car",
-    provider: "Uber",
+    category: "Scam Message",
+    provider: "SurakshaSathi AI Engine",
     pickup: "Urgent Bank KYC Freeze Pattern",
     destination: "Suspicious Domain / APK Download",
     baseFare: 85,
@@ -88,7 +96,7 @@ export default function RidesPage() {
     estimatedFare: 92,
     estimatedDurationMins: 1,
     surgeMultiplier: 1.0,
-    status: "Available",
+    status: "Active Rule",
   })
 
   const loadData = async (page = 1) => {
@@ -203,16 +211,16 @@ export default function RidesPage() {
             onClick={() => {
               setFormData({
                 title: "",
-                category: "Car",
-                provider: "Uber",
-                pickup: "Urgent Payment / Bank KYC Verification Text",
-                destination: "Unverified Short URL or APK Link",
+                category: "Scam Message",
+                provider: "SurakshaSathi AI Engine",
+                pickup: "URGENT: Your SBI/HDFC A/c suspended today. Verify PAN",
+                destination: "http://sbi-kyc-verify.site/pan-update",
                 baseFare: 80,
                 perKmRate: 15,
-                estimatedFare: 90,
+                estimatedFare: 95,
                 estimatedDurationMins: 1,
                 surgeMultiplier: 1.0,
-                status: "Available",
+                status: "Active Rule",
               })
               setIsAddOpen(true)
             }}
@@ -244,10 +252,10 @@ export default function RidesPage() {
             className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-cyan-400"
           >
             <option value="All">All Threat Categories</option>
-            <option value="Car">Scam Messages</option>
-            <option value="Bike">Phishing URLs</option>
-            <option value="Scooter">Emergency SOS</option>
-            <option value="Auto">Cyber Threat Rules</option>
+            <option value="Scam Message">Scam Messages</option>
+            <option value="Phishing URL">Phishing URLs</option>
+            <option value="Emergency SOS">Emergency SOS</option>
+            <option value="Cyber Threat">Cyber Threat Rules</option>
           </select>
 
           <select
@@ -256,11 +264,12 @@ export default function RidesPage() {
             className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-cyan-400"
           >
             <option value="All">All Threat Engines</option>
-            <option value="Uber">SurakshaSathi AI Engine</option>
-            <option value="Ola">PhishTank Threat Feed</option>
-            <option value="Rapido">National CyberCrime (1930)</option>
-            <option value="InDrive">Google SafeBrowsing</option>
-            <option value="QuickRide">Heuristic Inspection Rule</option>
+            <option value="SurakshaSathi AI Engine">SurakshaSathi AI Engine</option>
+            <option value="PhishTank Threat Feed">PhishTank Threat Feed</option>
+            <option value="National CyberCrime (1930)">National CyberCrime (1930)</option>
+            <option value="Google SafeBrowsing">Google SafeBrowsing</option>
+            <option value="CERT-In Threat Feed">CERT-In Threat Feed</option>
+            <option value="Heuristic Inspection Rule">Heuristic Inspection Rule</option>
           </select>
 
           <select
@@ -269,10 +278,11 @@ export default function RidesPage() {
             className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-cyan-400"
           >
             <option value="All">All Statuses</option>
-            <option value="Available">Active Rule</option>
-            <option value="High Demand">High Severity</option>
-            <option value="Surge Active">Threat Spike</option>
-            <option value="Unavailable">Disabled</option>
+            <option value="Active Rule">Active Rule</option>
+            <option value="High Severity">High Severity</option>
+            <option value="Threat Spike">Threat Spike</option>
+            <option value="Under Monitoring">Under Monitoring</option>
+            <option value="Disabled">Disabled</option>
           </select>
         </div>
       </div>
@@ -310,15 +320,54 @@ export default function RidesPage() {
                 rides.map((r) => {
                   const catLabel = categoryDisplayNames[r.category] || r.category
                   const provLabel = providerDisplayNames[r.provider] || r.provider
+
+                  const cleanTitle = (r.title || "")
+                    .replace(/Uber Premier Sedan/i, "Urgent Bank KYC Freeze Pattern")
+                    .replace(/Ola Prime Plus/i, "Fake Income Tax Refund Link")
+                    .replace(/Rapido Bike Taxi/i, "Lottery & KBC Prize Impersonation")
+                    .replace(/Uber Moto Express/i, "Malicious Banking Trojan APK")
+                    .replace(/Ola Auto Metered/i, "Electricity Disconnection Extortion")
+                    .replace(/Uber Auto Smart/i, "Credit Card Reward Points Trap")
+                    .replace(/InDrive Quick Scooter/i, "Part-Time Video Rating Telegram Trap")
+                    .replace(/QuickRide Shared Carpool/i, "Emergency SOS Distress Dispatch Verifier")
+
+                  const cleanCode = (r.rideId || "")
+                    .replace(/RC-CAR-01/i, "SIG-SMS-101")
+                    .replace(/RC-CAR-02/i, "SIG-URL-102")
+                    .replace(/RC-BIKE-01/i, "SIG-SMS-103")
+                    .replace(/RC-BIKE-02/i, "SIG-APK-104")
+                    .replace(/RC-AUTO-01/i, "SIG-SMS-105")
+                    .replace(/RC-AUTO-02/i, "SIG-URL-106")
+                    .replace(/RC-SCOOT-01/i, "SIG-SMS-107")
+                    .replace(/RC-CAR-03/i, "SIG-SOS-108")
+                    .replace(/^RC-/, "SIG-")
+
+                  const cleanPickup = (r.pickup || "")
+                    .replace(/Indiranagar 100ft Rd/i, "URGENT: Your SBI/HDFC A/c suspended")
+                    .replace(/Koramangala 5th Block/i, "Congratulations! Won ₹25,00,000 in KBC")
+                    .replace(/MG Road Metro/i, "Power will be disconnected at 9:30 PM")
+                    .replace(/Whitefield ITPL/i, "Download Mandatory Banking Security Patch")
+                    .replace(/Electronic City Phase 1/i, "Emergency Geo-Location SOS Beacon trigger")
+
+                  const cleanDestination = (r.destination || "")
+                    .replace(/Kempegowda Int'l Airport/i, "http://sbi-kyc-verify.site/pan-update")
+                    .replace(/HSR Layout Sector 1/i, "WhatsApp Helpline: +91-98765-XXXXX")
+                    .replace(/Commercial Street/i, "Call electricity officer: 98231...")
+                    .replace(/Marathahalli Bridge/i, "http://secure-update-patch.xyz/bank_v3.apk")
+                    .replace(/Silk Board Junction/i, "Dispatch to 112 & SMS Trusted Circle")
+
+                  const riskScore = r.estimatedFare > 100 ? Math.min(99, Math.round(r.estimatedFare / 10) + 20) : r.estimatedFare
+                  const cleanStatus = r.status === "Available" ? "Active Rule" : (r.status === "High Demand" ? "High Severity" : r.status)
+
                   return (
                     <tr key={r.id} className="hover:bg-slate-50 transition group">
                       <td className="py-3.5 px-4">
                         <div>
                           <div className="font-bold text-slate-900 group-hover:text-blue-600 transition">
-                            {r.title}
+                            {cleanTitle}
                           </div>
                           <div className="text-[11px] text-slate-500 font-mono">
-                            {r.rideId}
+                            {cleanCode}
                           </div>
                         </div>
                       </td>
@@ -326,7 +375,7 @@ export default function RidesPage() {
                       <td className="py-3.5 px-4">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-semibold border ${
-                            categoryColors[r.category] || "text-slate-700"
+                            categoryColors[r.category] || "text-slate-700 bg-slate-50 border-slate-200"
                           }`}
                         >
                           {catLabel}
@@ -338,16 +387,16 @@ export default function RidesPage() {
                       </td>
 
                       <td className="py-3.5 px-4 text-slate-700 text-[11px] max-w-xs truncate">
-                        <span className="text-slate-500">{r.pickup}</span>
-                        {r.destination && (
-                          <span className="text-cyan-600 ml-1">→ {r.destination}</span>
+                        <span className="text-slate-500">{cleanPickup}</span>
+                        {cleanDestination && (
+                          <span className="text-cyan-600 ml-1">→ {cleanDestination}</span>
                         )}
                       </td>
 
                       <td className="py-3.5 px-4">
                         <div className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
-                          <span className={r.estimatedFare >= 70 ? "text-rose-600" : "text-amber-600"}>
-                            {r.estimatedFare}%
+                          <span className={riskScore >= 70 ? "text-rose-600" : "text-amber-600"}>
+                            {riskScore}%
                           </span>
                           <span className="text-[10px] font-normal text-slate-500 uppercase">Risk</span>
                         </div>
@@ -360,7 +409,7 @@ export default function RidesPage() {
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <StatusBadge status={r.status} />
+                        <StatusBadge status={cleanStatus} />
                       </td>
 
                       <td className="py-3.5 px-4 text-right">
@@ -450,10 +499,10 @@ export default function RidesPage() {
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
               >
-                <option value="Car">Scam Message</option>
-                <option value="Bike">Phishing URL</option>
-                <option value="Scooter">Emergency SOS</option>
-                <option value="Auto">Cyber Threat</option>
+                <option value="Scam Message">Scam Message</option>
+                <option value="Phishing URL">Phishing URL</option>
+                <option value="Emergency SOS">Emergency SOS</option>
+                <option value="Cyber Threat">Cyber Threat</option>
               </select>
             </div>
 
@@ -464,11 +513,12 @@ export default function RidesPage() {
                 onChange={(e) => setFormData({ ...formData, provider: e.target.value })}
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
               >
-                <option value="Uber">SurakshaSathi AI Engine</option>
-                <option value="Ola">PhishTank Threat Feed</option>
-                <option value="Rapido">National CyberCrime (1930)</option>
-                <option value="InDrive">Google SafeBrowsing</option>
-                <option value="QuickRide">Heuristic Inspection Rule</option>
+                <option value="SurakshaSathi AI Engine">SurakshaSathi AI Engine</option>
+                <option value="PhishTank Threat Feed">PhishTank Threat Feed</option>
+                <option value="National CyberCrime (1930)">National CyberCrime (1930)</option>
+                <option value="Google SafeBrowsing">Google SafeBrowsing</option>
+                <option value="CERT-In Threat Feed">CERT-In Threat Feed</option>
+                <option value="Heuristic Inspection Rule">Heuristic Inspection Rule</option>
               </select>
             </div>
           </div>
@@ -518,10 +568,11 @@ export default function RidesPage() {
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-400"
               >
-                <option value="Available">Active & Enforced</option>
-                <option value="High Demand">High Priority Alert</option>
-                <option value="Surge Active">Strict Threat Throttling</option>
-                <option value="Unavailable">Disabled</option>
+                <option value="Active Rule">Active & Enforced</option>
+                <option value="High Severity">High Severity Alert</option>
+                <option value="Threat Spike">Strict Threat Throttling</option>
+                <option value="Under Monitoring">Under Monitoring</option>
+                <option value="Disabled">Disabled</option>
               </select>
             </div>
           </div>

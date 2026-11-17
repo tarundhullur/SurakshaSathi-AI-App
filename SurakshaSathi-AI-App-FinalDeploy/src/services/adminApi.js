@@ -450,7 +450,27 @@ export async function deleteUser(id) {
   )
 }
 
-// 3. Rides API
+// Helper: get and sanitize rides list
+function getSanitizedRides() {
+  let list = getStored(RIDES_STORAGE_KEY, initialRidesList)
+  const hasLegacy = Array.isArray(list) && list.some(
+    (r) =>
+      r.title?.includes("Uber") ||
+      r.title?.includes("Ola") ||
+      r.title?.includes("Rapido") ||
+      r.title?.includes("InDrive") ||
+      r.title?.includes("QuickRide") ||
+      r.pickup?.includes("Indiranagar") ||
+      r.rideId?.startsWith("RC-")
+  )
+  if (hasLegacy || !Array.isArray(list) || list.length === 0) {
+    list = initialRidesList
+    setStored(RIDES_STORAGE_KEY, list)
+  }
+  return list
+}
+
+// 3. Rides / Safety Scans API
 export async function fetchRides({ page = 1, limit = 10, search = "", category = "All", provider = "All", status = "All" } = {}) {
   const query = new URLSearchParams({ page, limit, search, category, provider, status }).toString()
 
@@ -458,7 +478,7 @@ export async function fetchRides({ page = 1, limit = 10, search = "", category =
     `/api/admin/rides?${query}`,
     { method: "GET" },
     () => {
-      let list = getStored(RIDES_STORAGE_KEY, initialRidesList)
+      let list = getSanitizedRides()
 
       if (search) {
         const q = search.toLowerCase()
@@ -505,20 +525,20 @@ export async function createRide(rideData) {
     "/api/admin/rides",
     { method: "POST", body: JSON.stringify(rideData) },
     () => {
-      const list = getStored(RIDES_STORAGE_KEY, initialRidesList)
+      const list = getSanitizedRides()
       const newRide = {
-        id: `ride-${Date.now()}`,
-        rideId: rideData.rideId || `RC-${(rideData.category || "CAR").toUpperCase().slice(0, 3)}-${Math.floor(10 + Math.random() * 90)}`,
-        category: rideData.category || "Car",
-        provider: rideData.provider || "Uber",
-        title: rideData.title || `${rideData.provider} ${rideData.category}`,
-        pickup: rideData.pickup || "Central Station",
-        destination: rideData.destination || "Airport Terminal",
-        baseFare: Number(rideData.baseFare) || 50,
-        perKmRate: Number(rideData.perKmRate) || 15,
-        estimatedFare: Number(rideData.estimatedFare) || 250,
-        estimatedDurationMins: Number(rideData.estimatedDurationMins) || 25,
-        status: rideData.status || "Available",
+        id: `scan-rule-${Date.now()}`,
+        rideId: rideData.rideId || `SIG-${(rideData.category || "SMS").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3)}-${Math.floor(100 + Math.random() * 900)}`,
+        category: rideData.category || "Scam Message",
+        provider: rideData.provider || "SurakshaSathi AI Engine",
+        title: rideData.title || "Custom Threat Detection Signature",
+        pickup: rideData.pickup || "Suspicious Message / Pattern",
+        destination: rideData.destination || "Target Domain or Payload",
+        baseFare: Number(rideData.baseFare) || 80,
+        perKmRate: Number(rideData.perKmRate) || 12,
+        estimatedFare: Number(rideData.estimatedFare) || 88,
+        estimatedDurationMins: Number(rideData.estimatedDurationMins) || 1,
+        status: rideData.status || "Active Rule",
         surgeMultiplier: Number(rideData.surgeMultiplier) || 1.0,
         rating: 4.8,
       }
@@ -527,8 +547,8 @@ export async function createRide(rideData) {
       setStored(RIDES_STORAGE_KEY, updated)
 
       recordLocalAuditLog({
-        message: `Admin added ride option: ${newRide.title} (${newRide.provider} ${newRide.category}).`,
-        category: "ride",
+        message: `Admin added safety scan detection rule: ${newRide.title} (${newRide.provider} / ${newRide.category}).`,
+        category: "safety_rule",
       })
 
       return newRide
@@ -541,7 +561,7 @@ export async function updateRide(id, updates) {
     `/api/admin/rides/${id}`,
     { method: "PATCH", body: JSON.stringify(updates) },
     () => {
-      const list = getStored(RIDES_STORAGE_KEY, initialRidesList)
+      const list = getSanitizedRides()
       const index = list.findIndex((r) => r.id === id)
       if (index === -1) throw new Error("Ride not found.")
 
@@ -550,8 +570,8 @@ export async function updateRide(id, updates) {
       setStored(RIDES_STORAGE_KEY, list)
 
       recordLocalAuditLog({
-        message: `Admin updated ride ${updated.rideId} (${updated.title}). Estimated Fare: ₹${updated.estimatedFare}.`,
-        category: "ride",
+        message: `Admin updated safety scan rule ${updated.rideId} (${updated.title}). Threat Risk: ${updated.estimatedFare}%.`,
+        category: "safety_rule",
       })
 
       return updated
@@ -564,14 +584,14 @@ export async function deleteRide(id) {
     `/api/admin/rides/${id}`,
     { method: "DELETE" },
     () => {
-      const list = getStored(RIDES_STORAGE_KEY, initialRidesList)
+      const list = getSanitizedRides()
       const ride = list.find((r) => r.id === id)
       const filtered = list.filter((r) => r.id !== id)
       setStored(RIDES_STORAGE_KEY, filtered)
 
       recordLocalAuditLog({
-        message: `Admin deleted ride option ${ride?.title || id}.`,
-        category: "ride",
+        message: `Admin deleted safety scan detection rule ${ride?.title || id}.`,
+        category: "safety_rule",
         severity: "WARN",
       })
 

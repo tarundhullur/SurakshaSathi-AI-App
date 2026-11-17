@@ -76,9 +76,9 @@ export default function AnalyticsPage() {
       {/* Top action bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Platform Performance & Insights</h2>
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Platform Safety & Threat Insights</h2>
           <p className="text-xs text-slate-500">
-            Real-time analytics across rides, users, aggregator win rates, and server response times.
+            Real-time analytics across safety scans, users, detection engine accuracy, and response times.
           </p>
         </div>
 
@@ -154,47 +154,57 @@ export default function AnalyticsPage() {
 
         <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-lg">
           <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
-            <span>Aggregator Network</span>
+            <span>Threat Intelligence Feeds</span>
             <TrendingUp className="w-4 h-4 text-purple-600" />
           </div>
           <div className="text-2xl font-extrabold text-slate-900 mt-2">
-            4 / 4 Live
+            5 / 5 Live
           </div>
           <div className="text-[11px] text-purple-600 font-medium mt-1">
-            Uber, Ola, Rapido, InDrive
+            AI Engine, PhishTank, 1930, SafeBrowsing, CERT-In
           </div>
         </div>
       </div>
 
-      {/* Row 2: Provider Win Rates & Category Share */}
+      {/* Row 2: Threat Detection Accuracy & Hourly Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Provider Win Rates */}
+        {/* Detection Engine Accuracy */}
         <div className="rounded-2xl bg-white border border-slate-200 p-6 shadow-xl">
           <h3 className="text-base font-bold text-slate-900 tracking-tight">
-            Provider Lowest Fare Win Rate
+            Threat Engine Interception Rate
           </h3>
           <p className="text-xs text-slate-500 mt-0.5 mb-5">
-            Percentage of searches where provider offered the lowest fare in the corridor.
+            Percentage of malicious SMS, phishing URLs, and cyber threats intercepted by engine.
           </p>
 
           <div className="space-y-4">
-            {analytics.providerWinRates.map((p) => (
-              <div key={p.provider} className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-900">{p.provider}</span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-slate-500 text-[11px]">Avg savings: {p.avgSavings}</span>
-                    <span className="font-extrabold text-blue-600">{p.winRatePct}%</span>
+            {(analytics.providerWinRates || []).map((p) => {
+              const engineMap = {
+                Uber: "SurakshaSathi AI Engine",
+                Ola: "PhishTank Threat Feed",
+                Rapido: "National CyberCrime (1930)",
+                InDrive: "Google SafeBrowsing",
+                QuickRide: "CERT-In Threat Feed",
+              }
+              const engineName = engineMap[p.provider] || p.provider
+              return (
+                <div key={p.provider} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-900">{engineName}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-slate-500 text-[11px]">Active Feed</span>
+                      <span className="font-extrabold text-blue-600">{p.winRatePct}%</span>
+                    </div>
+                  </div>
+                  <div className="w-full h-2.5 rounded-full bg-slate-50 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 transition-all duration-500"
+                      style={{ width: `${p.winRatePct}%` }}
+                    />
                   </div>
                 </div>
-                <div className="w-full h-2.5 rounded-full bg-slate-50 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 transition-all duration-500"
-                    style={{ width: `${p.winRatePct}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 

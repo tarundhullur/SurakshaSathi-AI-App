@@ -2,6 +2,7 @@ import React from "react"
 
 const statusStyles = {
   Active: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Active Rule": "bg-emerald-50 text-emerald-700 border-emerald-200",
   Available: "bg-emerald-50 text-emerald-700 border-emerald-200",
   Completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
   Operational: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -9,13 +10,17 @@ const statusStyles = {
 
   Inactive: "bg-amber-50 text-amber-700 border-amber-200",
   Pending: "bg-amber-50 text-amber-700 border-amber-200",
-  "High Demand": "bg-amber-50 text-amber-700 border-amber-200",
+  "High Demand": "bg-rose-50 text-rose-700 border-rose-200",
+  "High Severity": "bg-rose-50 text-rose-700 border-rose-200",
+  "Threat Spike": "bg-amber-50 text-amber-700 border-amber-200",
   "Surge Active": "bg-amber-50 text-amber-700 border-amber-200",
 
+  "Under Monitoring": "bg-cyan-50 text-cyan-700 border-cyan-200",
   Suspended: "bg-rose-50 text-rose-700 border-rose-200",
   Unavailable: "bg-rose-50 text-rose-700 border-rose-200",
   Failed: "bg-rose-50 text-rose-700 border-rose-200",
   Offline: "bg-rose-50 text-rose-700 border-rose-200",
+  Disabled: "bg-slate-100 text-slate-600 border-slate-200",
 }
 
 export default function StatusBadge({ status = "Active", size = "sm" }) {

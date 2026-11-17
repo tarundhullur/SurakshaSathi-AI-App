@@ -42,25 +42,27 @@ test("Create, update, and delete user lifecycle with audit logging", async () =>
   assert.equal(deleteRes.message, "User deleted successfully.")
 })
 
-test("Rides CRUD operations function correctly", async () => {
+test("Safety scan detection rules CRUD operations function correctly", async () => {
   const rides = await adminService.getRides({ page: 1, limit: 5 })
   assert.ok(rides.rides.length > 0)
 
-  const newRide = await adminService.createRide({
-    category: "Car",
-    provider: "Uber",
-    title: "Uber Premier Deluxe",
-    baseFare: 150,
-    perKmRate: 20,
-    estimatedFare: 800,
+  const newRule = await adminService.createRide({
+    category: "Scam Message",
+    provider: "SurakshaSathi AI Engine",
+    title: "Urgent KYC Verification Trap",
+    pickup: "Your account suspended. Click to verify",
+    destination: "http://fake-kyc.site",
+    baseFare: 80,
+    perKmRate: 15,
+    estimatedFare: 95,
   })
-  assert.ok(newRide.id)
-  assert.equal(newRide.provider, "Uber")
+  assert.ok(newRule.id)
+  assert.equal(newRule.provider, "SurakshaSathi AI Engine")
 
-  const updatedRide = await adminService.updateRide(newRide.id, { estimatedFare: 850 })
-  assert.equal(updatedRide.estimatedFare, 850)
+  const updatedRule = await adminService.updateRide(newRule.id, { estimatedFare: 98 })
+  assert.equal(updatedRule.estimatedFare, 98)
 
-  const deleteRideRes = await adminService.deleteRide(newRide.id)
+  const deleteRideRes = await adminService.deleteRide(newRule.id)
   assert.equal(deleteRideRes.message, "Ride deleted successfully.")
 })
 
