@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
-import { Pencil, Phone, Plus, Trash2, Users, AlertCircle, CheckCircle2, ShieldAlert, X, AlertTriangle } from "lucide-react"
+import { Pencil, Phone, Plus, Trash2, Users, AlertCircle, CheckCircle2, ShieldAlert, X, AlertTriangle, Lock } from "lucide-react"
 import PageHeader from "../components/PageHeader.jsx"
+import { useAuth } from "../contexts/AuthContext.jsx"
 import {
   getContacts,
   saveContacts,
@@ -24,6 +25,7 @@ function sanitizePhoneInput(value) {
 }
 
 export default function ContactsPage() {
+  const { isAuthenticated, requireAuth, openAuthModal } = useAuth()
   const [contacts, setContacts] = useState(() => deduplicateContacts(getContacts()))
   const [form, setForm] = useState(emptyForm)
   const [editingId, setEditingId] = useState(null)
@@ -58,6 +60,14 @@ export default function ContactsPage() {
 
   async function handleSubmit(event) {
     event.preventDefault()
+
+    if (!isAuthenticated) {
+      requireAuth(
+        () => {},
+        "Please sign in with Google or Email to save emergency contacts."
+      )
+      return
+    }
 
     // 1. Validate Name (Strictly no numbers allowed)
     const nameValidation = validateContactName(form.name)
@@ -151,6 +161,13 @@ export default function ContactsPage() {
   }
 
   function editContact(contact) {
+    if (!isAuthenticated) {
+      requireAuth(
+        () => editContact(contact),
+        "Please sign in with Google or Email to edit emergency contacts."
+      )
+      return
+    }
     const digits = extractIndianPhoneDigits(contact.phone)
     setForm({
       name: sanitizeNameInput(contact.name),
@@ -231,6 +248,34 @@ export default function ContactsPage() {
             className="text-xs font-bold text-emerald-700 hover:text-emerald-900 underline transition"
           >
             Dismiss
+          </button>
+        </div>
+      )}
+
+      {!isAuthenticated && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 text-xs shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="p-2 rounded-xl bg-teal-600 text-white shrink-0">
+              <Lock size={16} />
+            </span>
+            <div>
+              <p className="font-bold text-sm">Sign-in Required to Save & Manage Contacts</p>
+              <p className="text-teal-700">
+                Sign in with your Google or verified email account to securely manage trusted emergency contacts.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              openAuthModal(
+                "signin",
+                "Please sign in with Google or Email to manage emergency contacts."
+              )
+            }
+            className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold transition shrink-0"
+          >
+            Sign In
           </button>
         </div>
       )}
@@ -479,6 +524,15 @@ export default function ContactsPage() {
                       {isValid ? (
                         <a
                           href={`tel:${contact.phone}`}
+                          onClick={(e) => {
+                            if (!isAuthenticated) {
+                              e.preventDefault()
+                              requireAuth(
+                                () => { window.location.href = `tel:${contact.phone}` },
+                                "Please sign in with Google or Email to make emergency calls."
+                              )
+                            }
+                          }}
                           className="rounded-lg p-2.5 text-teal-700 hover:bg-teal-50 transition"
                           aria-label={`Call ${contact.name}`}
                           title={`Call +91 ${contact.phone}`}
@@ -504,7 +558,16 @@ export default function ContactsPage() {
                         <Pencil size={18} />
                       </button>
                       <button
-                        onClick={() => setContactToDelete(contact)}
+                        onClick={() => {
+                          if (!isAuthenticated) {
+                            requireAuth(
+                              () => setContactToDelete(contact),
+                              "Please sign in with Google or Email to delete emergency contacts."
+                            )
+                            return
+                          }
+                          setContactToDelete(contact)
+                        }}
                         className="rounded-lg p-2.5 text-red-600 hover:bg-red-50 transition"
                         aria-label={`Delete ${contact.name}`}
                         title="Delete contact"

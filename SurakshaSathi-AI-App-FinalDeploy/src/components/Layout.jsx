@@ -31,9 +31,9 @@ const links = [
   },
   { to: "/url-checker", label: "URL checker", icon: Link2, interactive: true },
   { to: "/sos", label: "Emergency SOS", icon: AlertTriangle, interactive: true },
-  { to: "/services", label: "Nearby services", icon: MapPin, public: true },
-  { to: "/contacts", label: "Emergency contacts", icon: Users, public: true },
-  { to: "/tips", label: "Safety tips", icon: BookOpen, public: true },
+  { to: "/services", label: "Nearby services", icon: MapPin, interactive: true },
+  { to: "/contacts", label: "Emergency contacts", icon: Users, interactive: true },
+  { to: "/tips", label: "Safety tips", icon: BookOpen, interactive: true },
 ]
 
 export default function Layout() {
@@ -68,7 +68,7 @@ export default function Layout() {
       setOpen(false)
       requireAuth(
         () => navigate(link.to),
-        `Please sign in with Google, GitHub, or Email to use ${link.label}.`
+        `Please sign in with Google or Email to access ${link.label}.`
       )
     } else {
       setOpen(false)

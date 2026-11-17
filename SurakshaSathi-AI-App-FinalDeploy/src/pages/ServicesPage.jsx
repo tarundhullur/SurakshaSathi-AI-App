@@ -1,6 +1,7 @@
 import { useState } from "react"
-import { Ambulance, Building2, Cross, MapPin, Pill } from "lucide-react"
+import { Ambulance, Building2, Cross, MapPin, Pill, Lock } from "lucide-react"
 import PageHeader from "../components/PageHeader.jsx"
+import { useAuth } from "../contexts/AuthContext.jsx"
 
 const categories = [
   {
@@ -30,11 +31,20 @@ const categories = [
 ]
 
 export default function ServicesPage() {
+  const { isAuthenticated, requireAuth, openAuthModal } = useAuth()
   const [status, setStatus] = useState(
     "Choose a category to search Google Maps.",
   )
 
   function openSearch(query) {
+    if (!isAuthenticated) {
+      requireAuth(
+        () => openSearch(query),
+        "Please sign in with Google or Email to search nearby emergency services."
+      )
+      return
+    }
+
     setStatus("Requesting location…")
     const open = (coordinates = "") => {
       const locationPart = coordinates ? ` near ${coordinates}` : ""
@@ -70,6 +80,34 @@ export default function ServicesPage() {
         title="Emergency services around you"
         description="Choose a service to open a Google Maps search centered near your current coordinates when permission is available."
       />
+
+      {!isAuthenticated && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 text-xs shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="p-2 rounded-xl bg-teal-600 text-white shrink-0">
+              <Lock size={16} />
+            </span>
+            <div>
+              <p className="font-bold text-sm">Sign-in Required to Search Nearby Services</p>
+              <p className="text-teal-700">
+                Sign in with your Google or verified email account to locate hospitals, police, ambulances, and pharmacies near you.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              openAuthModal(
+                "signin",
+                "Please sign in with Google or Email to search nearby emergency services."
+              )
+            }
+            className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold transition shrink-0"
+          >
+            Sign In
+          </button>
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         {categories.map(({ name, query, icon: Icon, color }) => (
           <button

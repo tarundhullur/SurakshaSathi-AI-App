@@ -56,7 +56,7 @@ const features = [
     text: "Search Maps for hospitals, police, ambulances, or pharmacies.",
     icon: MapPin,
     color: "bg-amber-50 text-amber-700",
-    interactive: false,
+    interactive: true,
   },
   {
     to: "/contacts",
@@ -64,7 +64,7 @@ const features = [
     text: "Keep emergency contacts on this device for quick access.",
     icon: Users,
     color: "bg-violet-50 text-violet-700",
-    interactive: false,
+    interactive: true,
   },
   {
     to: "/tips",
@@ -72,7 +72,7 @@ const features = [
     text: "Learn simple habits that reduce everyday cyber risk.",
     icon: BookOpen,
     color: "bg-emerald-50 text-emerald-700",
-    interactive: false,
+    interactive: true,
   },
 ]
 
