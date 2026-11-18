@@ -16,6 +16,8 @@ import {
   sanitizeRelationshipInput,
   isDuplicateContactPhone,
   deduplicateContacts,
+  INDIAN_EMERGENCY_HELPLINES,
+  isEmergencyHelplineNumber,
 } from "../utils/contacts.js"
 
 const emptyForm = { name: "", phone: "", relationship: "" }
@@ -53,10 +55,17 @@ export default function ContactsPage() {
     }
   }, [contactToDelete, confirmCleanInvalid])
 
-  const isInvalidStart = form.phone.length > 0 && !/^[6-9]/.test(form.phone)
-  const isCompleteValid = form.phone.length === 10 && /^[6-9]\d{9}$/.test(form.phone)
+  const isHelpline = isEmergencyHelplineNumber(form.phone)
+  const isInvalidStart =
+    form.phone.length > 0 &&
+    !/^[6-9]/.test(form.phone) &&
+    !form.phone.startsWith("1")
+  const isCompleteValid =
+    (form.phone.length === 10 && /^[6-9]\d{9}$/.test(form.phone)) || isHelpline
   const invalidCount = contacts.filter((c) => !isValidIndianPhoneNumber(c.phone)).length
-  const isDuplicate = form.phone.length === 10 && isDuplicateContactPhone(contacts, form.phone, editingId)
+  const isDuplicate =
+    (form.phone.length === 10 || isHelpline) &&
+    isDuplicateContactPhone(contacts, form.phone, editingId)
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -83,8 +92,9 @@ export default function ContactsPage() {
 
     // 3. Prevent duplicate contacts (Same phone number cannot be added again)
     if (isDuplicateContactPhone(contacts, phoneValidation.phone, editingId)) {
+      const formattedPhone = formatIndianPhoneNumber(phoneValidation.phone)
       return setError(
-        `Duplicate contact: A contact with phone number +91 ${phoneValidation.phone.slice(0, 5)} ${phoneValidation.phone.slice(5)} is already saved in your contacts list.`
+        `Duplicate contact: A contact with phone number ${formattedPhone} is already saved in your contacts list.`
       )
     }
 
@@ -110,7 +120,7 @@ export default function ContactsPage() {
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
         setSubmitting(false)
-        return setError(data.message || "Backend rejected contact: Numbers are not allowed in names, and phone must be a 10-digit Indian number.")
+        return setError(data.message || "Backend rejected contact: Numbers are not allowed in names, and phone must be a 10-digit Indian number or emergency helpline.")
       }
     } catch {
       // Local server offline or disconnected; proceed with client validation
@@ -134,6 +144,11 @@ export default function ContactsPage() {
       setEditingId(null)
       setError("")
       setNameError("")
+      setFeedbackMessage({
+        type: "success",
+        text: editingId ? `Updated contact "${contact.name}".` : `Added contact "${contact.name}".`,
+      })
+      setTimeout(() => setFeedbackMessage(null), 4000)
     } catch (saveErr) {
       setError(saveErr.message)
     } finally {
@@ -317,13 +332,17 @@ export default function ContactsPage() {
             )}
           </label>
 
-          {/* Phone Number with strict 10-digit Indian rules */}
+          {/* Phone Number with strict 10-digit Indian rules or official helpline */}
           <label className="mt-5 block text-sm font-bold">
             <span className="flex items-center justify-between">
-              <span>Phone number (Indian 10-digit mobile)</span>
+              <span>Phone number (Indian 10-digit mobile or helpline)</span>
               {isDuplicate ? (
                 <span className="text-xs font-bold text-rose-600">
                   Already in contacts
+                </span>
+              ) : isHelpline ? (
+                <span className="text-xs font-bold text-emerald-600">
+                  Verified Helpline ✓
                 </span>
               ) : isInvalidStart ? (
                 <span className="text-xs font-bold text-rose-600">
@@ -347,7 +366,6 @@ export default function ContactsPage() {
               <input
                 type="tel"
                 inputMode="numeric"
-                pattern="[6-9][0-9]{9}"
                 maxLength={MAX_PHONE_DIGITS}
                 value={form.phone}
                 onChange={(event) =>
@@ -356,7 +374,7 @@ export default function ContactsPage() {
                     phone: sanitizePhoneInput(event.target.value),
                   })
                 }
-                placeholder="e.g. 9876543210"
+                placeholder="e.g. 9876543210 or 1091, 112"
                 className={`w-full rounded-xl p-3.5 text-sm font-normal outline-none transition ${
                   isDuplicate || isInvalidStart
                     ? "border-2 border-rose-400 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-4 focus:ring-rose-100"
@@ -372,15 +390,20 @@ export default function ContactsPage() {
                 <AlertCircle size={14} className="shrink-0" />
                 This phone number is already saved. Duplicate contacts are not allowed.
               </p>
+            ) : isHelpline ? (
+              <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                <CheckCircle2 size={14} className="shrink-0" />
+                Verified Emergency Helpline: {INDIAN_EMERGENCY_HELPLINES[form.phone] || "Official Helpline"}
+              </p>
             ) : isInvalidStart ? (
               <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-rose-600">
                 <AlertCircle size={14} className="shrink-0" />
-                Invalid Indian number: Indian mobile numbers must start with 6, 7, 8, or 9.
+                Invalid Indian number: Indian mobile numbers must start with 6, 7, 8, or 9 (or enter an official emergency helpline like 112, 1091, 100, 108).
               </p>
             ) : form.phone.length > 0 && form.phone.length < 10 ? (
               <p className="mt-1.5 flex items-center gap-1 text-xs text-amber-600">
                 <AlertCircle size={14} className="shrink-0" />
-                Enter exactly 10 digits ({10 - form.phone.length} more needed).
+                Enter 10-digit mobile number ({10 - form.phone.length} more needed) or official emergency helpline (e.g. 112, 1091, 100).
               </p>
             ) : isCompleteValid ? (
               <p className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-emerald-600">
@@ -389,7 +412,7 @@ export default function ContactsPage() {
               </p>
             ) : (
               <p className="mt-1.5 text-xs text-slate-500">
-                Enter a 10-digit Indian phone number starting with 6, 7, 8, or 9.
+                Enter a 10-digit Indian phone number starting with 6, 7, 8, or 9, or an official helpline (112, 1091, 100, 108).
               </p>
             )}
           </label>
@@ -482,6 +505,14 @@ export default function ContactsPage() {
             <div className="mt-4 space-y-3">
               {contacts.map((contact) => {
                 const isValid = isValidIndianPhoneNumber(contact.phone)
+                const isHelpline = isEmergencyHelplineNumber(contact.phone)
+                const helplineName = INDIAN_EMERGENCY_HELPLINES[contact.phone]
+                const displayPhone = isHelpline
+                  ? `${contact.phone}${helplineName ? ` (${helplineName})` : " (Helpline)"}`
+                  : contact.phone.length === 10
+                  ? `+91 ${contact.phone.slice(0, 5)} ${contact.phone.slice(5)}`
+                  : contact.phone
+
                 return (
                   <div
                     key={contact.id}
@@ -495,7 +526,9 @@ export default function ContactsPage() {
                       <span
                         className={`grid h-11 w-11 place-items-center rounded-full ${
                           isValid
-                            ? "bg-teal-50 text-teal-700"
+                            ? isHelpline
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-teal-50 text-teal-700"
                             : "bg-rose-100 text-rose-700"
                         }`}
                       >
@@ -504,15 +537,19 @@ export default function ContactsPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold">{contact.name}</h3>
-                          {!isValid && (
+                          {isHelpline ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 border border-emerald-200">
+                              <CheckCircle2 size={11} /> Verified Helpline
+                            </span>
+                          ) : !isValid ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700 border border-rose-200">
                               <ShieldAlert size={11} /> Invalid Indian number
                             </span>
-                          )}
+                          ) : null}
                         </div>
                         <p className="text-sm text-slate-500">
                           <span className={isValid ? "font-mono font-medium text-slate-800" : "font-mono font-medium text-rose-600 line-through"}>
-                            {isValid ? `+91 ${contact.phone.slice(0, 5)} ${contact.phone.slice(5)}` : contact.phone}
+                            {displayPhone}
                           </span>
                           {contact.relationship
                             ? ` · ${contact.relationship}`
@@ -535,7 +572,7 @@ export default function ContactsPage() {
                           }}
                           className="rounded-lg p-2.5 text-teal-700 hover:bg-teal-50 transition"
                           aria-label={`Call ${contact.name}`}
-                          title={`Call +91 ${contact.phone}`}
+                          title={`Call ${contact.phone}`}
                         >
                           <Phone size={18} />
                         </a>

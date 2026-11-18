@@ -2,7 +2,7 @@
  * Emergency Contacts Storage & Strict Validation
  * Enforces:
  * - Contact Names: Letters and spaces only (STRICTLY NO NUMBERS)
- * - Indian Phone Numbers: Strict 10 digits starting with 6, 7, 8, or 9
+ * - Indian Phone Numbers: Strict 10 digits starting with 6, 7, 8, or 9 OR official emergency helplines (112, 1091, 100, 108, etc.)
  * - Duplicate Prevention: Duplicate phone numbers are strictly prohibited
  * - Relationships: Letters and spaces only (NO numbers)
  */
@@ -10,13 +10,41 @@
 const STORAGE_KEY = "suraksha-emergency-contacts"
 export const MAX_PHONE_DIGITS = 10
 
+export const INDIAN_EMERGENCY_HELPLINES = {
+  "112": "National Emergency Helpline",
+  "100": "Police Emergency",
+  "101": "Fire Service",
+  "102": "Ambulance",
+  "108": "Emergency Disaster & Medical",
+  "1090": "Women Power Line",
+  "1091": "Women in Distress Helpline",
+  "1098": "Childline Emergency Helpline",
+  "181": "Women Helpline (Domestic Abuse)",
+  "1930": "National Cyber Crime Helpline",
+  "1070": "Disaster Management National Helpline",
+  "1077": "Control Room Helpline",
+  "1075": "National Health Helpline",
+  "1097": "National Health & AIDS Helpline",
+  "14416": "Tele-MANAS Mental Health Helpline",
+  "139": "Railway Security Helpline",
+}
+
+export function isEmergencyHelplineNumber(input) {
+  if (!input) return false
+  const digits = String(input).replace(/\D/g, "")
+  return Boolean(INDIAN_EMERGENCY_HELPLINES[digits])
+}
+
 /**
- * Extracts and normalizes the 10-digit Indian phone number.
+ * Extracts and normalizes the 10-digit Indian phone number or emergency helpline shortcode.
  * Handles optional leading +91 / 91 country code and 0 trunk prefix.
  */
 export function extractIndianPhoneDigits(input) {
   if (!input) return ""
   let digits = String(input).replace(/\D/g, "")
+  if (isEmergencyHelplineNumber(digits)) {
+    return digits
+  }
   if (digits.length === 12 && digits.startsWith("91")) {
     digits = digits.slice(2)
   }
@@ -27,10 +55,12 @@ export function extractIndianPhoneDigits(input) {
 }
 
 /**
- * Validates if input is a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.
+ * Validates if input is a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9
+ * OR an official emergency helpline number.
  */
 export function isValidIndianPhoneNumber(input) {
   const digits = extractIndianPhoneDigits(input)
+  if (isEmergencyHelplineNumber(digits)) return true
   return /^[6-9]\d{9}$/.test(digits)
 }
 
@@ -41,7 +71,7 @@ export function validateIndianPhoneNumber(input) {
   if (!input || !String(input).trim()) {
     return {
       valid: false,
-      error: "Phone number is required. Enter a 10-digit Indian mobile number.",
+      error: "Phone number is required. Enter a 10-digit Indian mobile number or official helpline.",
     }
   }
   const digits = extractIndianPhoneDigits(input)
@@ -51,10 +81,18 @@ export function validateIndianPhoneNumber(input) {
       error: "Phone number must contain numeric digits.",
     }
   }
+  if (isEmergencyHelplineNumber(digits)) {
+    return {
+      valid: true,
+      phone: digits,
+      isHelpline: true,
+      helplineName: INDIAN_EMERGENCY_HELPLINES[digits],
+    }
+  }
   if (!/^[6-9]/.test(digits)) {
     return {
       valid: false,
-      error: "Invalid Indian mobile number: Number must begin with 6, 7, 8, or 9.",
+      error: "Invalid Indian mobile number: Number must begin with 6, 7, 8, or 9 (or enter an official emergency helpline like 112, 1091, 100, 108).",
     }
   }
   if (digits.length !== 10) {
@@ -63,7 +101,7 @@ export function validateIndianPhoneNumber(input) {
       error: `Phone number must be exactly 10 digits (currently ${digits.length} digits).`,
     }
   }
-  return { valid: true, phone: digits }
+  return { valid: true, phone: digits, isHelpline: false }
 }
 
 /**
@@ -175,9 +213,13 @@ export function deduplicateContacts(contacts) {
   const seenPhones = new Set()
   const unique = []
   for (const c of contacts) {
+    if (!c) continue
     const digits = extractIndianPhoneDigits(c.phone)
     if (digits && !seenPhones.has(digits)) {
       seenPhones.add(digits)
+      unique.push(c)
+    } else if (!digits && c.id && !seenPhones.has(c.id)) {
+      seenPhones.add(c.id)
       unique.push(c)
     }
   }
@@ -186,9 +228,13 @@ export function deduplicateContacts(contacts) {
 
 /**
  * Formats 10-digit phone number as standard Indian format: "98765 43210" or "+91 98765 43210"
+ * or displays official emergency helpline name.
  */
 export function formatIndianPhoneNumber(input) {
   const digits = extractIndianPhoneDigits(input)
+  if (INDIAN_EMERGENCY_HELPLINES[digits]) {
+    return `${digits} (${INDIAN_EMERGENCY_HELPLINES[digits]})`
+  }
   if (digits.length === 10) {
     return `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`
   }
@@ -201,56 +247,89 @@ export function getContacts() {
     if (!raw) return []
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed)) return []
-    // Automatically deduplicate on retrieval
-    const deduped = deduplicateContacts(parsed)
+    // Auto sanitize contacts from localStorage to guarantee no crashes
+    const sanitized = parsed
+      .map((c) => {
+        if (!c || typeof c !== "object") return null
+        return {
+          id: c.id || String(Date.now() + Math.random()),
+          name: sanitizeNameInput(c.name || "Emergency Contact") || "Emergency Contact",
+          phone: String(c.phone || "").replace(/[^\d+]/g, "").slice(0, 15),
+          relationship: sanitizeRelationshipInput(c.relationship || ""),
+        }
+      })
+      .filter(Boolean)
+
+    const deduped = deduplicateContacts(sanitized)
     if (deduped.length !== parsed.length && typeof localStorage !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(deduped))
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(deduped))
+      } catch {}
     }
     return deduped
-  } catch {
+  } catch (err) {
+    console.warn("Failed to load contacts from localStorage:", err)
     return []
   }
 }
 
 export function saveContacts(contacts) {
   if (!Array.isArray(contacts)) {
-    throw new Error("Contacts must be an array.")
+    console.warn("saveContacts: Contacts must be an array.")
+    return { success: false, error: "Contacts must be an array." }
   }
 
-  // Validate every contact
-  const seenPhones = new Set()
-  for (const c of contacts) {
-    // 1. Name validation (no numbers allowed)
-    const nameRes = validateContactName(c.name)
-    if (!nameRes.valid) {
-      throw new Error(`Cannot save contact: ${nameRes.error}`)
-    }
+  try {
+    const seenPhones = new Set()
+    const sanitized = []
 
-    // 2. Phone validation (10-digit Indian phone)
-    const phoneRes = validateIndianPhoneNumber(c.phone)
-    if (!phoneRes.valid) {
-      throw new Error(`Cannot save contact "${c.name}": ${phoneRes.error}`)
-    }
+    for (const c of contacts) {
+      if (!c) continue
 
-    // 3. Relationship validation (no numbers allowed)
-    if (c.relationship) {
-      const relRes = validateRelationship(c.relationship)
-      if (!relRes.valid) {
-        throw new Error(`Cannot save contact "${c.name}": ${relRes.error}`)
+      // 1. Name validation (no numbers allowed)
+      const nameRes = validateContactName(c.name)
+      const validName = nameRes.valid
+        ? nameRes.name
+        : sanitizeNameInput(c.name || "Emergency Contact") || "Emergency Contact"
+
+      // 2. Phone validation (10-digit Indian phone or helpline)
+      const phoneRes = validateIndianPhoneNumber(c.phone)
+      const validPhone = phoneRes.valid
+        ? phoneRes.phone
+        : extractIndianPhoneDigits(c.phone) || String(c.phone || "").replace(/\D/g, "")
+
+      // 3. Relationship validation (no numbers allowed)
+      let validRel = ""
+      if (c.relationship) {
+        const relRes = validateRelationship(c.relationship)
+        validRel = relRes.valid
+          ? relRes.relationship
+          : sanitizeRelationshipInput(c.relationship)
       }
+
+      // 4. Duplicate phone validation
+      if (validPhone && seenPhones.has(validPhone)) {
+        continue // Skip duplicate
+      }
+      if (validPhone) {
+        seenPhones.add(validPhone)
+      }
+
+      sanitized.push({
+        ...c,
+        id: c.id || String(Date.now() + Math.random()),
+        name: validName,
+        phone: validPhone,
+        relationship: validRel,
+      })
     }
 
-    // 4. Duplicate phone validation
-    const digits = phoneRes.phone
-    if (seenPhones.has(digits)) {
-      throw new Error(
-        `Duplicate contact: A contact with phone number +91 ${digits.slice(0, 5)} ${digits.slice(5)} is already in the list.`
-      )
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized))
     }
-    seenPhones.add(digits)
-  }
-
-  if (typeof localStorage !== "undefined") {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts))
+    return { success: true }
+  } catch (err) {
+    console.warn("Error saving contacts safely:", err)
+    return { success: false, error: err.message }
   }
 }

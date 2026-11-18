@@ -432,3 +432,30 @@ test("Security Test L: Google Account Verification and Wrong Email Rejection", a
   assert.equal(validateEmailAddress("tarundhullur06@gmail.com").valid, true)
   assert.equal(validateEmailAddress("bad@gmial.com").valid, false)
 })
+
+test("Security Test M: Indian Emergency Helplines (Women in Distress 1091, 112, 100, 108) are recognized as valid", async () => {
+  const { isValidIndianPhoneNumber, validateIndianPhoneNumber, isEmergencyHelplineNumber } = await import("../utils/phoneValidator.js")
+
+  // 1. Women in Distress Helpline (1091)
+  assert.equal(isEmergencyHelplineNumber("1091"), true, "1091 must be recognized as helpline")
+  assert.equal(isValidIndianPhoneNumber("1091"), true, "1091 must be valid")
+  const res1091 = validateIndianPhoneNumber("1091")
+  assert.equal(res1091.valid, true)
+  assert.equal(res1091.isHelpline, true)
+  assert.equal(res1091.helplineName, "Women in Distress Helpline")
+
+  // 2. National Emergency (112)
+  assert.equal(isValidIndianPhoneNumber("112"), true, "112 must be valid")
+  const res112 = validateIndianPhoneNumber("112")
+  assert.equal(res112.valid, true)
+  assert.equal(res112.isHelpline, true)
+
+  // 3. Police (100) & Ambulance (108) & Cyber Crime (1930)
+  assert.equal(isValidIndianPhoneNumber("100"), true, "100 must be valid")
+  assert.equal(isValidIndianPhoneNumber("108"), true, "108 must be valid")
+  assert.equal(isValidIndianPhoneNumber("1930"), true, "1930 must be valid")
+
+  // 4. Invalid numbers are still rejected
+  assert.equal(isValidIndianPhoneNumber("1234567890"), false, "Fake 1234567890 must be rejected")
+  assert.equal(isValidIndianPhoneNumber("999"), false, "Random 999 must be rejected")
+})

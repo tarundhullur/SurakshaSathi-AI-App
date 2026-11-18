@@ -76,7 +76,10 @@ router.post("/contacts/validate", (request, response) => {
   response.json({
     valid: true,
     phone: result.phone,
-    formatted: `+91 ${result.phone.slice(0, 5)} ${result.phone.slice(5)}`,
+    isHelpline: Boolean(result.isHelpline),
+    formatted: result.isHelpline
+      ? `${result.phone} (${result.helplineName || "Helpline"})`
+      : `+91 ${result.phone.slice(0, 5)} ${result.phone.slice(5)}`,
   })
 })
 

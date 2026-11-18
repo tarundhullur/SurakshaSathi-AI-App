@@ -9,9 +9,37 @@
 
 export const MAX_PHONE_DIGITS = 10
 
+export const INDIAN_EMERGENCY_HELPLINES = {
+  "112": "National Emergency Helpline",
+  "100": "Police Emergency",
+  "101": "Fire Service",
+  "102": "Ambulance",
+  "108": "Emergency Disaster & Medical",
+  "1090": "Women Power Line",
+  "1091": "Women in Distress Helpline",
+  "1098": "Childline Emergency Helpline",
+  "181": "Women Helpline (Domestic Abuse)",
+  "1930": "National Cyber Crime Helpline",
+  "1070": "Disaster Management National Helpline",
+  "1077": "Control Room Helpline",
+  "1075": "National Health Helpline",
+  "1097": "National Health & AIDS Helpline",
+  "14416": "Tele-MANAS Mental Health Helpline",
+  "139": "Railway Security Helpline",
+}
+
+export function isEmergencyHelplineNumber(input) {
+  if (!input) return false
+  const digits = String(input).replace(/\D/g, "")
+  return Boolean(INDIAN_EMERGENCY_HELPLINES[digits])
+}
+
 export function extractIndianPhoneDigits(input) {
   if (!input) return ""
   let digits = String(input).replace(/\D/g, "")
+  if (isEmergencyHelplineNumber(digits)) {
+    return digits
+  }
   if (digits.length === 12 && digits.startsWith("91")) {
     digits = digits.slice(2)
   }
@@ -23,6 +51,7 @@ export function extractIndianPhoneDigits(input) {
 
 export function isValidIndianPhoneNumber(input) {
   const digits = extractIndianPhoneDigits(input)
+  if (isEmergencyHelplineNumber(digits)) return true
   return /^[6-9]\d{9}$/.test(digits)
 }
 
@@ -30,7 +59,7 @@ export function validateIndianPhoneNumber(input) {
   if (!input || !String(input).trim()) {
     return {
       valid: false,
-      error: "Phone number is required. Enter a 10-digit Indian mobile number.",
+      error: "Phone number is required. Enter a 10-digit Indian mobile number or emergency helpline.",
     }
   }
   const digits = extractIndianPhoneDigits(input)
@@ -38,6 +67,14 @@ export function validateIndianPhoneNumber(input) {
     return {
       valid: false,
       error: "Phone number must contain numeric digits.",
+    }
+  }
+  if (isEmergencyHelplineNumber(digits)) {
+    return {
+      valid: true,
+      phone: digits,
+      isHelpline: true,
+      helplineName: INDIAN_EMERGENCY_HELPLINES[digits],
     }
   }
   if (!/^[6-9]/.test(digits)) {
@@ -52,7 +89,7 @@ export function validateIndianPhoneNumber(input) {
       error: `Phone number must be exactly 10 digits (currently ${digits.length} digits).`,
     }
   }
-  return { valid: true, phone: digits }
+  return { valid: true, phone: digits, isHelpline: false }
 }
 
 /**
